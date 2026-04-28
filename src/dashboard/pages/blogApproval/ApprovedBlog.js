@@ -1,0 +1,618 @@
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import NavigatedComponent from "../NavigatedComponent";
+import Header from "../../common/Header";
+import {
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Snackbar,
+  Alert,
+  CircularProgress,
+  Grid,
+  Paper,
+  TextField,
+  Pagination,
+  PaginationItem,
+  InputLabel,
+  MenuItem,
+  Select,
+  InputAdornment,
+  useMediaQuery,
+} from "@mui/material";
+import Sidenav from "../../common/Sidenav";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import { useCookies } from "react-cookie";
+import { config } from "../../../config/config";
+import { apiList, invokeApi } from "../../../services/apiServices";
+import IconSidenav from "../../common/IconSidenav";
+import FirstPageRoundedIcon from "@mui/icons-material/FirstPageRounded";
+import LastPageRoundedIcon from "@mui/icons-material/LastPageRounded";
+import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
+import SearchIcon from "@mui/icons-material/Search";
+
+const ApprovedBlog = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [cookies] = useCookies();
+  const isUsersPage = location.pathname === "/blog-approval/approved-blog-list";
+  const [page, setPage] = useState(0);
+  const isMobileScreen = useMediaQuery(
+    "(min-width:360px) and (max-width:500px)"
+  );
+  const [rowsPerPage, setRowsPerPage] = useState(isMobileScreen ? 5 : 10);
+
+  const [rows, setRows] = useState([]);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
+  const [showSideNav, setShowSideNav] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value.trimStart());
+  };
+  const filteredRows = rows.filter((row) => {
+    const { blogTitle, createdBy, approvedBy } = row;
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    
+
+    return (
+      (blogTitle && blogTitle.toLowerCase().includes(lowerCaseQuery)) ||
+      (createdBy && createdBy.toLowerCase().includes(lowerCaseQuery)) ||
+      (approvedBy && approvedBy.toLowerCase().includes(lowerCaseQuery))
+    );
+  });
+
+  const toggleSideNav = () => {
+    setShowSideNav(!showSideNav);
+  };
+  const columns = [
+    { id: "item1", label: "Sl. No" },
+    { id: "item2", label: "Logo" },
+    { id: "item3", label: "Blog Title" },
+    { id: "item4", label: "Created By" },
+    { id: "item5", label: "Approved By" },
+    { id: "item6", label: "Action" },
+  ];
+
+  const fetchTableData = async () => {
+    const params = { status: "Active" };
+    try {
+      const response = await invokeApi(
+        config.getMyCollege + apiList.getBlogs,
+        params,
+        cookies
+      );
+      if (response?.status === 200) {
+        setRows(response.data.blogs);
+        setLoading(false);
+      } else {
+        console.error("Failed to fetch data:", response);
+      }
+    } catch (error) {
+      console.error("Error during data fetch:", error);
+    }
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchTableData();
+  }, []);
+
+  const handleView = async (id) => {
+    const params = {
+      id: id,
+    };
+    try {
+      const response = await invokeApi(
+        config.getMyCollege + apiList.getBlog,
+        params,
+        cookies
+      );
+
+      if (response?.status === 200) {
+        const blogData = response.data.blog;
+
+        navigate(`/blog-approval/view-blog-approve-list/${id}`, {
+          state: { blogData },
+        });
+        console.log(blogData);
+      } else {
+        showSnackbar("Something went wrong. Please try again later!!");
+      }
+    } catch (error) {
+      console.error("Error during data fetch:", error);
+      showSnackbar("Something went wrong. Please try again later!!");
+    }
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
+  const showSnackbar = (message, severity) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setOpenSnackbar(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
+  return (
+    <div>
+      <Grid sx={{ display: "flex" }}>
+        {isMobileScreen ? (
+          <IconSidenav />
+        ) : showSideNav ? (
+          <IconSidenav />
+        ) : (
+          <Sidenav />
+        )}
+        <Grid component="main" sx={{ width: "100%", px: 1 }}>
+          <Header toggleSideNav={toggleSideNav} />
+          <Grid sx={{ py: 1 }}>
+            <NavigatedComponent pathname={location.pathname} />
+            <Grid sx={{ width: "100%", px: isMobileScreen ? 1 : 5 }}>
+              <Grid
+                container
+                md={12}
+                xs={12}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  my: 2,
+                }}
+              >
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    type="text"
+                    size="small"
+                    placeholder="search"
+                    name="searchQuery"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon sx={{ color: "#1D1A57" }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    inputProps={{
+                      style: {
+                        height: isMobileScreen ? 10 : 15,
+                        fontSize: isMobileScreen ? 12 : 14,
+                      },
+                    }}
+                    sx={{
+                      width: isMobileScreen ? "250px" : "400px",
+                      background: "#f0f8ff",
+                      borderRadius: "20px",
+
+                      border: "1px solid #1D1A57",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        border: "none",
+                      },
+                    }}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid
+                sx={{
+                  my: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {isUsersPage && (
+                  <>
+                    {loading ? (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height: isMobileScreen ? "100px" : "200px",
+                        }}
+                      >
+                        <CircularProgress />
+                      </Box>
+                    ) : (
+                      <>
+                        <Paper
+                          sx={{
+                            width: "100%",
+                            boxShadow: 3,
+                            py: 1,
+                            maxWidth: isMobileScreen ? 275 : "none",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              px: 2,
+                              py: 1,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+
+                                alignItems: "center",
+                                gap: isMobileScreen ? 1 : 10,
+                              }}
+                            >
+                              <Box
+                                sx={{ display: "flex", alignItems: "center" }}
+                              >
+                                <InputLabel
+                                  sx={{
+                                    mx: 1,
+                                    fontSize: isMobileScreen ? 10 : 12,
+                                  }}
+                                >
+                                  Row per page
+                                </InputLabel>
+                                <Select
+                                  value={rowsPerPage}
+                                  onChange={handleChangeRowsPerPage}
+                                  sx={{
+                                    height: 25,
+                                    fontSize: isMobileScreen ? 10 : 12,
+                                  }}
+                                  MenuProps={{
+                                    PaperProps: {
+                                      style: {
+                                        maxHeight: "100px",
+                                      },
+                                    },
+                                  }}
+                                >
+                                  <MenuItem
+                                    value={isMobileScreen ? 5 : 10}
+                                    sx={{
+                                      fontSize: isMobileScreen ? 10 : 12,
+                                      "&.MuiButtonBase-root": {
+                                        minHeight: 0,
+                                      },
+                                    }}
+                                  >
+                                    {isMobileScreen ? 5 : 10}
+                                  </MenuItem>
+                                  <MenuItem
+                                    value={isMobileScreen ? 10 : 20}
+                                    sx={{
+                                      fontSize: isMobileScreen ? 10 : 12,
+                                      "&.MuiButtonBase-root": {
+                                        minHeight: 0,
+                                      },
+                                    }}
+                                  >
+                                    {isMobileScreen ? 10 : 20}
+                                  </MenuItem>
+                                  <MenuItem
+                                    value={isMobileScreen ? 15 : 30}
+                                    sx={{
+                                      fontSize: isMobileScreen ? 10 : 12,
+                                      "&.MuiButtonBase-root": {
+                                        minHeight: 0,
+                                      },
+                                    }}
+                                  >
+                                    {isMobileScreen ? 15 : 30}
+                                  </MenuItem>
+                                </Select>
+                              </Box>
+                              <Box
+                                sx={{ display: "flex", alignItems: "center" }}
+                              >
+                                <InputLabel
+                                  sx={{
+                                    mx: 1,
+                                    fontSize: isMobileScreen ? 10 : 12,
+                                  }}
+                                >
+                                  Go to page
+                                </InputLabel>
+                                <TextField
+                                  type="number"
+                                  variant="outlined"
+                                  value={page + 1}
+                                  onChange={(event) => {
+                                    const pageNumber = parseInt(
+                                      event.target.value,
+                                      10
+                                    );
+                                    handleChangePage(event, pageNumber - 1);
+                                  }}
+                                  inputProps={{
+                                    min: 1,
+                                    max: Math.ceil(
+                                      filteredRows.length / rowsPerPage
+                                    ),
+                                    style: {
+                                      height: "auto",
+
+                                      fontSize: isMobileScreen ? 10 : 12,
+                                      padding: "1px 7px",
+                                    },
+                                  }}
+                                  sx={{ width: isMobileScreen ? 40 : 60 }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: isMobileScreen ? "none" : "flex",
+                              }}
+                            >
+                              <Pagination
+                                count={Math.ceil(
+                                  filteredRows.length / rowsPerPage
+                                )}
+                                page={page + 1}
+                                onChange={(event, value) =>
+                                  handleChangePage(event, value - 1)
+                                }
+                                color="primary"
+                                renderItem={(item) => (
+                                  <PaginationItem
+                                    {...item}
+                                    style={{
+                                      fontSize: isMobileScreen ? 10 : 12,
+                                    }}
+                                  />
+                                )}
+                                shape="rounded"
+                                boundaryCount={1}
+                                siblingCount={1}
+                                showFirstButton
+                                showLastButton
+                                firstIcon={<FirstPageRoundedIcon />}
+                                lastIcon={<LastPageRoundedIcon />}
+                                prevIcon={<ChevronLeftRoundedIcon />}
+                                nextIcon={<ChevronRightRoundedIcon />}
+                              />
+                            </Box>
+                          </Box>
+
+                          <TableContainer
+                            id="table-container"
+                            sx={{
+                              maxHeight: isMobileScreen ? 440 : 440,
+                              overflowY: "auto",
+                            }}
+                          >
+                            <Table aria-label="sticky table">
+                              <TableHead
+                                style={{
+                                  background: "white",
+                                  position: isMobileScreen
+                                    ? "sticky"
+                                    : "sticky",
+                                  top: 0,
+                                  zIndex: 5,
+                                  textAlign: "left",
+                                }}
+                              >
+                                <TableRow>
+                                  {columns.map((column, index) => (
+                                    <TableCell
+                                      key={index}
+                                      style={{
+                                        width: `${100 / columns.length}%`,
+                                        background: "#fff",
+                                        zIndex: 100,
+                                        backgroundColor: "#f0f8ff",
+                                        fontWeight: 600,
+                                        boxShadow: 2,
+                                        whiteSpace: "nowrap",
+                                        textAlign: "left",
+                                      }}
+                                    >
+                                      <Grid
+                                        sx={{
+                                          display: "flex",
+
+                                          gap: 0,
+                                          fontSize: 13,
+                                        }}
+                                      >
+                                        {column.label}
+                                      </Grid>
+                                    </TableCell>
+                                  ))}
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {filteredRows.length === 0 ? (
+                                  <TableRow>
+                                    <TableCell
+                                      colSpan={columns.length}
+                                      align="center"
+                                      style={{ py: "6px" }}
+                                    >
+                                      No data found
+                                    </TableCell>
+                                  </TableRow>
+                                ) : (
+                                  filteredRows
+                                    .slice(
+                                      page * rowsPerPage,
+                                      page * rowsPerPage + rowsPerPage
+                                    )
+                                    .map((row, index) => (
+                                      <TableRow key={index}>
+                                        <TableCell
+                                          sx={{
+                                            py: "4px",
+                                            position: isMobileScreen
+                                              ? "sticky"
+                                              : "none",
+                                            left: isMobileScreen ? 0 : "none",
+
+                                            background: isMobileScreen
+                                              ? "#f0f8ff"
+                                              : "none",
+                                            px: 2,
+                                            fontSize: 12,
+                                            textAlign: "left",
+                                          }}
+                                        >
+                                          {index + 1 + page * rowsPerPage}
+                                        </TableCell>
+
+                                        <TableCell
+                                          sx={{
+                                            py: "6px",
+                                            textAlign: "left",
+                                            "@media (min-width: 1440px) and (max-width:2000px)":
+                                            {
+                                              whiteSpace: "nowrap",
+                                            },
+                                            fontSize: 12,
+                                          }}
+                                        >
+                                          <Grid sx={{ width: 25, height: 25 }}>
+                                            <img
+                                              src={row.logoUrl}
+                                              alt="CollegeLogoImage"
+                                              style={{
+                                                width: "100%",
+                                                height: "100%",
+                                                objectFit: "cover",
+                                              }}
+                                            />
+                                          </Grid>
+                                        </TableCell>
+                                        <TableCell
+                                          sx={{
+                                            py: "6px",
+                                            textAlign: "left",
+                                            "@media (min-width: 1440px) and (max-width:2000px)":
+                                            {
+                                              whiteSpace: "nowrap",
+                                            },
+                                            fontSize: 12,
+                                          }}
+                                        >
+                                          {row.blogTitle}
+                                        </TableCell>
+                                        <TableCell
+                                          sx={{
+                                            py: "6px",
+                                            textAlign: "left",
+                                            "@media (min-width: 1440px) and (max-width:2000px)":
+                                            {
+                                              whiteSpace: "nowrap",
+                                            },
+                                            fontSize: 12,
+                                          }}
+                                        >
+                                          {row.createdBy}
+                                        </TableCell>
+                                        <TableCell
+                                          sx={{
+                                            py: "6px",
+                                            textAlign: "left",
+                                            "@media (min-width: 1440px) and (max-width:2000px)":
+                                            {
+                                              whiteSpace: "nowrap",
+                                            },
+                                            fontSize: 12,
+                                          }}
+                                        >
+                                          {row.approvedBy}
+                                        </TableCell>
+                                        <TableCell
+                                          sx={{
+                                            py: "6px",
+                                            textAlign: "left",
+                                            whiteSpace: "nowrap",
+                                          }}
+                                        >
+                                          <Button
+                                            sx={{
+                                              marginRight: 2,
+                                              height: "20px",
+                                              my: "3px",
+                                              fontSize: 11,
+                                              "&.MuiButtonBase-root": {
+                                                border: "1px solid #1565c0",
+                                                minWidth: 30,
+                                                py: 1,
+                                              },
+                                              "@media (min-width: 1440px) and (max-width:2000px)":
+                                              {
+                                                my: 0,
+                                              },
+                                            }}
+                                            onClick={() => handleView(row.id)}
+                                          >
+                                            <VisibilityOutlinedIcon
+                                              style={{
+                                                fontSize: 14,
+                                                color: "#1565c0",
+                                              }}
+                                            />
+                                          </Button>
+                                        </TableCell>
+                                      </TableRow>
+                                    ))
+                                )}
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                        </Paper>
+                      </>
+                    )}
+                  </>
+                )}
+
+                {/* Snackbar */}
+                <Snackbar
+                  open={openSnackbar}
+                  autoHideDuration={4000}
+                  onClose={handleCloseSnackbar}
+                  anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                  sx={{ width: "auto" }}
+                >
+                  <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={snackbarSeverity}
+                    sx={{ width: "auto" }}
+                  >
+                    {snackbarMessage}
+                  </Alert>
+                </Snackbar>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    </div>
+  );
+};
+
+export default ApprovedBlog;
