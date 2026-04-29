@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Typography, Card, CardContent, Avatar, Rating } from '@mui/material';
+import { Box, Container, Typography, Card, CardContent, Avatar, Rating, useTheme, useMediaQuery } from '@mui/material';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -26,6 +26,9 @@ const testimonials = [
 ];
 
 const Testimonials = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const settings = {
     dots: true,
     infinite: true,
@@ -50,12 +53,21 @@ const Testimonials = () => {
   };
 
   return (
-    <Box sx={{ py: 10, backgroundColor: '#F9FAF4', overflow: 'hidden' }}>
+    <Box sx={{ py: isMobile ? 4 : 10, backgroundColor: '#F9FAF4', overflow: 'hidden' }}>
       <Container maxWidth="lg">
-        <Typography variant="h3" align="center" gutterBottom sx={{ mb: 6 }}>
+        <Typography
+          variant="h3"
+          align="center"
+          gutterBottom
+          sx={{
+            mb: isMobile ? 4 : 6,
+            fontSize: isMobile ? '2.2rem' : '3rem',
+            fontWeight: 800
+          }}
+        >
           Trusted by 50,000+ Families
         </Typography>
-        
+
         <Box sx={{ mx: -2 }}>
           <Slider {...settings}>
             {testimonials.map((t, index) => (

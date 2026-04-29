@@ -10,6 +10,7 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemIcon,
   ListItemText,
   Badge,
   useScrollTrigger,
@@ -21,13 +22,20 @@ import {
   ClickAwayListener,
   Grid,
   Divider,
-} from '@mui/material';
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
 import {
   Menu as MenuIcon,
   Search as SearchIcon,
   FavoriteBorder as FavoriteIcon,
   ShoppingBagOutlined as CartIcon,
   PersonOutline as AccountIcon,
+  Home as HomeIcon,
+  Opacity as OilIcon,
+  Storefront as ShopIcon,
+  Article as BlogIcon,
+  Message as ContactIcon
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -53,16 +61,16 @@ function HideOnScroll(props) {
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [shopAnchor, setShopAnchor] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { totalItems } = useCart();
   const { user } = useUser();
 
-  const handleShopClick = (event) => setShopAnchor(event.currentTarget);
-  const handleShopClose = () => setShopAnchor(null);
+
 
   const shopCategories = [
     { label: 'Cold Pressed Oils', path: '/shop' },
@@ -96,79 +104,50 @@ const Header = () => {
   };
 
   const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'Our Oils', path: '/our-oils' },
-    { label: 'Shop', path: '/shop' },
-    { label: 'Blog', path: '/blog' },
-    { label: 'Contact', path: '/contact' },
+    { label: 'Home', path: '/', icon: <HomeIcon fontSize="small" /> },
+    { label: 'Our Oils', path: '/our-oils', icon: <OilIcon fontSize="small" /> },
+    { label: 'Shop', path: '/shop', icon: <ShopIcon fontSize="small" /> },
+    { label: 'Blog', path: '/blog', icon: <BlogIcon fontSize="small" /> },
+    { label: 'Contact', path: '/contact', icon: <ContactIcon fontSize="small" /> },
   ];
 
-  const renderShopMenu = (
-    <Menu
-      anchorEl={shopAnchor}
-      open={Boolean(shopAnchor)}
-      onClose={handleShopClose}
-      TransitionComponent={Fade}
-      sx={{
-        '& .MuiPaper-root': {
-          width: '100%',
-          maxWidth: 900,
-          mt: { md: 2 },
-          p: 3,
-          borderRadius: 0,
-          boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-        }
-      }}
-    >
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={4}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2, color: 'primary.main' }}>COLD PRESSED OILS</Typography>
-          <Box sx={{ position: 'relative', overflow: 'hidden', height: 120, mb: 1, backgroundColor: '#F5F5F5' }}>
-            <Box component="img" src={groundnutImg} sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-          </Box>
-          <List dense sx={{ p: 0 }}>
-            <ListItem button onClick={handleShopClose} component={Link} to="/shop"><ListItemText primary="Groundnut Oil" /></ListItem>
-            <ListItem button onClick={handleShopClose} component={Link} to="/shop"><ListItemText primary="Coconut Oil" /></ListItem>
-            <ListItem button onClick={handleShopClose} component={Link} to="/shop"><ListItemText primary="Mustard Oil" /></ListItem>
-          </List>
-        </Grid>
 
-        <Grid item xs={12} md={4}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2, color: 'primary.main' }}>TRADITIONAL GHEE</Typography>
-          <Box sx={{ position: 'relative', overflow: 'hidden', height: 120, mb: 1, backgroundColor: '#F5F5F5' }}>
-            <Box component="img" src={gheeImg} sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-          </Box>
-          <List dense sx={{ p: 0 }}>
-            <ListItem button onClick={handleShopClose} component={Link} to="/shop"><ListItemText primary="A2 Gir Cow Ghee" /></ListItem>
-            <ListItem button onClick={handleShopClose} component={Link} to="/shop"><ListItemText primary="Traditional Bilona" /></ListItem>
-          </List>
-        </Grid>
-
-        <Grid item xs={12} md={4}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 2, color: 'primary.main' }}>WHOLESOME GOODS</Typography>
-          <Box sx={{ position: 'relative', overflow: 'hidden', height: 120, mb: 1, backgroundColor: '#F5F5F5' }}>
-            <Box component="img" src={coconutImg} sx={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-          </Box>
-          <List dense sx={{ p: 0 }}>
-            <ListItem button onClick={handleShopClose} component={Link} to="/shop"><ListItemText primary="Gluten Free Flour" /></ListItem>
-            <ListItem button onClick={handleShopClose} component={Link} to="/shop"><ListItemText primary="Natural Sweeteners" /></ListItem>
-          </List>
-        </Grid>
-      </Grid>
-    </Menu>
-  );
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   const drawer = (
-    <Box sx={{ textAlign: 'center', p: 2 }}>
-      <Typography variant="h6" sx={{ my: 2, color: 'primary.main', fontWeight: 700 }}>AMRUTHA DHAREE</Typography>
+    <Box sx={{ p: isMobile ? 1 : 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: isMobile ? 1 : 2, px: 1 }}>
+        <Box component="img" src={logo} alt="Amrutha Dharee" sx={{ height: "60px", width: "auto" }} />
+        <Typography variant="subtitle2" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: 0.5, lineHeight: 1.2 }}>
+          AMRUTHA <br />DHAREE
+        </Typography>
+      </Box>
       <Divider />
       <List>
         {navItems.map((item) => (
           <ListItem key={item.label} disablePadding>
-            <ListItem sx={{ textAlign: 'center' }} button component={Link} to={item.path} onClick={handleDrawerToggle}>
-              <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600 }} />
+            <ListItem
+              button
+              component={Link}
+              to={item.path}
+              onClick={handleDrawerToggle}
+              sx={{
+                textAlign: 'left',
+                py: 1.5,
+                px: 2,
+                borderRadius: '8px',
+                mb: 0.5,
+                '&:hover': { bgcolor: '#F9FAF4', color: 'primary.main' }
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40, color: 'primary.main' }}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.label}
+                primaryTypographyProps={{ fontWeight: 700, fontSize: '1rem', color: 'text.primary' }}
+              />
             </ListItem>
           </ListItem>
         ))}
@@ -181,20 +160,28 @@ const Header = () => {
       <AppBar position="sticky" color="transparent" elevation={0} sx={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(8px)', borderBottom: '1px solid #EAEAEA' }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-            <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ display: { md: 'none' } }}>
-              <MenuIcon />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton color="inherit" edge="start" onClick={handleDrawerToggle} sx={{ display: { md: 'none' }, mr: isMobile ? 0 : 0.5 }}>
+                <MenuIcon />
+              </IconButton>
 
-            <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box component="img" src={logo} alt="Amrutha Dharee" sx={{ height: { xs: 45, md: 70 }, width: 'auto' }} />
+              <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', py: isMobile ? 1 : 1 }}>
+                <Box component="img" src={logo} alt="Amrutha Dharee" sx={{ height: isMobile ? "45px" : "75px", width: "auto" }} />
+              </Box>
             </Box>
 
             <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 3 }}>
               {navItems.map((item) => (
                 <Button
                   key={item.label}
-                  onClick={item.label === 'Shop' ? handleShopClick : () => navigate(item.path)}
-                  sx={{ color: 'text.primary', fontWeight: 600, '&:hover': { color: 'primary.main' } }}
+                  onClick={() => navigate(item.path)}
+                  sx={{
+                    color: 'text.primary',
+                    fontWeight: 700,
+                    fontSize: '1.1rem',
+                    '&:hover': { color: 'primary.main' },
+                    textTransform: 'capitalize'
+                  }}
                 >
                   {item.label}
                 </Button>
@@ -202,7 +189,7 @@ const Header = () => {
             </Box>
 
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <Box sx={{ position: 'relative', display: { xs: 'none', lg: 'block' } }}>
+              <Box sx={{ position: 'relative', display: { xs: 'none', lg: 'block' }, mt: 1 }}>
                 <ClickAwayListener onClickAway={() => setShowSuggestions(false)}>
                   <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#F5F5F5', px: 2 }}>
                     <input
@@ -218,23 +205,22 @@ const Header = () => {
               </Box>
               <IconButton color="inherit" onClick={() => navigate('/cart')}>
                 <Badge badgeContent={totalItems} color="secondary">
-                  <CartIcon />
+                  <CartIcon sx={{ fontSize: 30 }} />
                 </Badge>
               </IconButton>
               <IconButton color="inherit" onClick={() => navigate(user ? '/account' : '/login')}>
-                <AccountIcon />
+                <AccountIcon sx={{ fontSize: 30 }} />
               </IconButton>
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
-      {renderShopMenu}
       <Drawer
         variant="temporary"
         open={mobileOpen}
         onClose={handleDrawerToggle}
         ModalProps={{ keepMounted: true }}
-        sx={{ display: { xs: 'block', md: 'none' }, '& .MuiDrawer-paper': { width: 280 } }}
+        sx={{ display: { xs: 'block', md: 'none' }, '& .MuiDrawer-paper': { width: 240 } }}
       >
         {drawer}
       </Drawer>

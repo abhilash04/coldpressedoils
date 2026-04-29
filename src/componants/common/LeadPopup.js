@@ -4,7 +4,6 @@ import {
   Button, IconButton, useTheme, useMediaQuery
 } from '@mui/material';
 import { Close as CloseIcon, Phone as PhoneIcon, Person as PersonIcon } from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
 import Cookies from 'js-cookie';
 import { invokeApi, apiList } from '../../services/apiServices';
 import { config } from '../../config/config';
@@ -93,14 +92,14 @@ const LeadPopup = () => {
       </IconButton> */}
 
       <DialogContent sx={{ p: 0 }}>
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
           {/* Left Column - Image/Branding */}
           <Box
             sx={{
-              width: { xs: '100%', md: '40%' },
+              width: { xs: '100%', sm: '40%' },
+              display: { xs: 'none', sm: 'flex' },
               bgcolor: 'primary.main',
               p: 4,
-              display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',

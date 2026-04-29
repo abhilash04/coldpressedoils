@@ -10,7 +10,9 @@ import {
   MenuItem,
   IconButton,
   Divider,
-  Link
+  Link,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import {
   Phone,
@@ -23,22 +25,25 @@ import {
 } from '@mui/icons-material';
 
 const ContactPage = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
     <Box>
-      <Box sx={{ py: 10, bgcolor: 'primary.main', color: '#FFF', textAlign: 'center' }}>
+      <Box sx={{ py: isMobile ? 6 : 10, bgcolor: 'primary.main', color: '#FFF', textAlign: 'center' }}>
         <Container maxWidth="md">
-          <Typography variant="h2" gutterBottom>Contact Us</Typography>
+          <Typography variant={isMobile ? "h3" : "h2"} gutterBottom sx={{ fontWeight: 800 }}>Contact Us</Typography>
           <Typography variant="h6" sx={{ fontWeight: 400, opacity: 0.8 }}>
             Have a question about our oils? We're here to help you on your health journey.
           </Typography>
         </Container>
       </Box>
 
-      <Container maxWidth="lg" sx={{ py: 10 }}>
-        <Grid container spacing={8}>
+      <Container maxWidth="lg" sx={{ py: isMobile ? 4 : 6 }}>
+        <Grid container spacing={isMobile ? 4 : 8}>
           {/* Left: Contact Form */}
           <Grid item xs={12} md={7}>
-            <Typography variant="h4" sx={{ mb: 4, fontWeight: 700 }}>Send us a Message</Typography>
+            <Typography variant={isMobile ? "h5" : "h4"} sx={{ mb: 4, fontWeight: 700 }}>Send us a Message</Typography>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <TextField fullWidth label="Your Name" variant="outlined" />
@@ -75,7 +80,7 @@ const ContactPage = () => {
                 <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>Our Information</Typography>
 
                 <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                  <IconButton sx={{ bgcolor: 'primary.main', color: '#FFF', '&:hover': { bgcolor: 'primary.dark' } }}>
+                  <IconButton sx={{ bgcolor: 'primary.main', color: '#FFF', width: 48, height: 48, '&:hover': { bgcolor: 'primary.dark' } }}>
                     <Phone />
                   </IconButton>
                   <Box>
@@ -85,7 +90,7 @@ const ContactPage = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                  <IconButton sx={{ bgcolor: 'secondary.main', color: '#FFF', '&:hover': { bgcolor: 'secondary.dark' } }}>
+                  <IconButton sx={{ bgcolor: 'secondary.main', color: '#FFF', width: 48, height: 48, '&:hover': { bgcolor: 'secondary.dark' } }}>
                     <WhatsApp />
                   </IconButton>
                   <Box>
@@ -97,7 +102,7 @@ const ContactPage = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                  <IconButton sx={{ bgcolor: 'primary.main', color: '#FFF', '&:hover': { bgcolor: 'primary.dark' } }}>
+                  <IconButton sx={{ bgcolor: 'primary.main', color: '#FFF', width: 48, height: 48, '&:hover': { bgcolor: 'primary.dark' } }}>
                     <Email />
                   </IconButton>
                   <Box>
@@ -107,7 +112,7 @@ const ContactPage = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2 }}>
-                  <IconButton sx={{ bgcolor: 'primary.main', color: '#FFF', '&:hover': { bgcolor: 'primary.dark' } }}>
+                  <IconButton sx={{ bgcolor: 'primary.main', color: '#FFF', width: 48, height: 48, '&:hover': { bgcolor: 'primary.dark' } }}>
                     <LocationOn />
                   </IconButton>
                   <Box>
@@ -118,11 +123,11 @@ const ContactPage = () => {
               </Paper>
 
               <Box>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>Follow Us</Typography>
+                <Typography variant="h6" sx={{ mb: isMobile ? 2 : 2, fontWeight: 700 }}>Follow Us</Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                  <IconButton color="primary"><Instagram /></IconButton>
-                  <IconButton color="primary"><Facebook /></IconButton>
-                  <IconButton color="primary"><YouTube /></IconButton>
+                  <IconButton sx={{ color: 'primary.main', width: 48, height: 48, border: '1px solid', borderColor: 'divider' }}><Instagram /></IconButton>
+                  <IconButton sx={{ color: 'primary.main', width: 48, height: 48, border: '1px solid', borderColor: 'divider' }}><Facebook /></IconButton>
+                  <IconButton sx={{ color: 'primary.main', width: 48, height: 48, border: '1px solid', borderColor: 'divider' }}><YouTube /></IconButton>
                 </Box>
               </Box>
             </Box>
@@ -131,8 +136,10 @@ const ContactPage = () => {
       </Container>
 
       {/* Map Placeholder */}
-      <Box sx={{ height: '400px', width: '100%', bgcolor: '#EEE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Typography variant="h6" color="text.secondary">Google Maps Integration Placeholder</Typography>
+      <Box sx={{ height: isMobile ? '300px' : '450px', width: '100%', bgcolor: '#EEE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
+          Google Maps Integration Placeholder
+        </Typography>
       </Box>
     </Box>
   );

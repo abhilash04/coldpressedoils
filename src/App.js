@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation, useParams } from "
 import { Box, Typography, Container, Divider } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import Layout from "./componants/common/Layout";
+import ScrollToTop from "./componants/common/ScrollToTop";
 
 // Storefront Imports
 import HomePage from "./componants/pages/HomePage/index";
@@ -54,6 +55,7 @@ import { config } from "./config/config";
 import { Navigate } from "react-router-dom";
 import { useUser } from "./context/UserContext";
 import ProtectedRoute from "./componants/common/ProtectedRoute";
+import OurOils from "./componants/pages/OurOils";
 
 const AnimatedWrapper = ({ children }) => (
   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }}>
@@ -74,9 +76,9 @@ const PublicRoute = ({ children }) => {
 };
 
 const LeadWrapper = () => {
-    const { status } = useParams();
-    const formattedStatus = status.charAt(0).toUpperCase() + status.slice(1);
-    return <DashLeadsList statusFilter={formattedStatus} />;
+  const { status } = useParams();
+  const formattedStatus = status.charAt(0).toUpperCase() + status.slice(1);
+  return <DashLeadsList statusFilter={formattedStatus} />;
 };
 
 const AnimatedRoutes = () => {
@@ -86,6 +88,7 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         {/* Storefront */}
         <Route path="/" element={<AnimatedWrapper><HomePage /></AnimatedWrapper>} />
+        <Route path="/our-oils" element={<AnimatedWrapper><OurOils /></AnimatedWrapper>} />
         <Route path="/shop" element={<AnimatedWrapper><ShopPage /></AnimatedWrapper>} />
         <Route path="/shop/:category" element={<AnimatedWrapper><CategoryPage /></AnimatedWrapper>} />
         <Route path="/product/:slug" element={<AnimatedWrapper><ProductDetail /></AnimatedWrapper>} />
@@ -108,29 +111,29 @@ const AnimatedRoutes = () => {
 
         {/* Dashboard Ecosystem */}
         <Route path="/dashboard/login" element={<PublicRoute><DashLogin /></PublicRoute>} />
-        
+
         <Route path="/dashboard" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashHome /></ProtectedRoute>} />
-        
+
         {/* Inventory Management */}
         <Route path="/inventory-manager/product-list" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashProductList /></ProtectedRoute>} />
         <Route path="/inventory-manager/add-new-product" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashAddProduct /></ProtectedRoute>} />
         <Route path="/inventory-manager/categories" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashCategoryList /></ProtectedRoute>} />
-        
+
         {/* Lead Management */}
         <Route path="/lead-manager/:status" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><LeadWrapper /></ProtectedRoute>} />
-        
+
         {/* Staff Management */}
         <Route path="/employee-manager/users" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashUserList /></ProtectedRoute>} />
         <Route path="/employee-manager/add-user" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashAddUser /></ProtectedRoute>} />
-        
+
         {/* Content Management */}
         <Route path="/blog-manager/blog-list" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashBlogList /></ProtectedRoute>} />
         <Route path="/blog-manager/add-blog" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashAddBlog /></ProtectedRoute>} />
-        
+
         {/* Editor's Queue */}
         <Route path="/blog-approval/blog-approve-list" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashBlogApproval isApprovedView={false} /></ProtectedRoute>} />
         <Route path="/blog-approval/approved-blog-list" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashBlogApproval isApprovedView={true} /></ProtectedRoute>} />
-        
+
         {/* Marketing/SEO */}
         <Route path="/seo-manager/add-sites" element={<ProtectedRoute adminOnly={true} redirectTo="/dashboard/login"><DashAddSite /></ProtectedRoute>} />
 
@@ -143,6 +146,7 @@ const AnimatedRoutes = () => {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AppContent />
     </Router>
   );
@@ -150,9 +154,9 @@ function App() {
 
 function AppContent() {
   const location = useLocation();
-  const isDashboard = location.pathname.startsWith('/dashboard') || 
-                      location.pathname.includes('-manager') ||
-                      location.pathname.includes('-approval');
+  const isDashboard = location.pathname.startsWith('/dashboard') ||
+    location.pathname.includes('-manager') ||
+    location.pathname.includes('-approval');
 
   return (
     <>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Container, Grid, Typography, Button, Card, CardMedia, CardActionArea } from '@mui/material';
+import { Box, Container, Grid, Typography, Button, Card, CardMedia, CardActionArea, useTheme, useMediaQuery } from '@mui/material';
 import { motion } from 'framer-motion';
 
 const categories = [
@@ -36,21 +36,33 @@ const categories = [
 ];
 
 const CategoryShowcase = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
-    <Box sx={{ py: 10, backgroundColor: '#F9FAF4' }}>
+    <Box sx={{ py: isMobile ? 4 : 10, backgroundColor: '#F9FAF4' }}>
       <Container maxWidth="lg">
-        <Typography variant="h3" align="center" gutterBottom sx={{ mb: 6 }}>
+        <Typography
+          variant="h3"
+          align="center"
+          gutterBottom
+          sx={{
+            mb: isMobile ? 4 : 6,
+            fontSize: isMobile ? '2.5rem' : '3.5rem',
+            fontWeight: 800
+          }}
+        >
           Explore Our Categories
         </Typography>
-        
-        <Grid container spacing={3}>
+
+        <Grid container spacing={isMobile ? 3 : 3}>
           {categories.map((cat, index) => (
             <Grid item xs={12} sm={cat.grid === 4 ? 6 : 12} md={cat.grid} key={index}>
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card sx={{ borderRadius: 0, position: 'relative', height: 400, overflow: 'hidden' }}>
+                <Card sx={{ borderRadius: 2, position: 'relative', height: isMobile ? 350 : 400, overflow: 'hidden' }}>
                   <CardActionArea href={cat.path} sx={{ height: '100%' }}>
                     <CardMedia
                       component="img"
@@ -65,27 +77,41 @@ const CategoryShowcase = () => {
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        backgroundColor: 'rgba(0,0,0,0.3)',
+                        backgroundColor: 'rgba(0,0,0,0.4)',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignItems: 'center',
                         color: '#FFF',
+                        p: 2,
                         transition: 'background-color 0.3s',
                         '&:hover': {
                           backgroundColor: 'rgba(45, 106, 79, 0.6)',
                         },
                       }}
                     >
-                      <Typography variant="h4" sx={{ fontWeight: 700, textAlign: 'center' }}>
+                      <Typography
+                        variant={isMobile ? "h5" : "h3"}
+                        sx={{
+                          fontWeight: 700,
+                          textAlign: 'center',
+                          lineHeight: 1.2,
+                          mb: isMobile ? 1 : 2
+                        }}
+                      >
                         {cat.title}
                       </Typography>
                       <Button
                         variant="outlined"
+                        size={isMobile ? "medium" : "large"}
                         sx={{
                           mt: 2,
                           color: '#FFF',
                           borderColor: '#FFF',
+                          fontSize: isMobile ? '0.9rem' : '1.1rem',
+                          px: isMobile ? 3 : 5,
+                          py: isMobile ? 1 : 1.5,
+                          fontWeight: 600,
                           '&:hover': { backgroundColor: '#FFF', color: 'primary.main' },
                         }}
                       >
