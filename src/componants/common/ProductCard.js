@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardMedia, CardContent, Typography, Button, Box, IconButton, Rating, Chip } from '@mui/material';
+import { Card, CardMedia, CardContent, Typography, Button, Box, IconButton, Rating, Chip, useTheme, useMediaQuery } from '@mui/material';
 import { FavoriteBorder, AddShoppingCart } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
@@ -29,18 +29,19 @@ const assetMap = {
 const ProductCard = ({ product }) => {
   const { addToCart, setCartOpen } = useCart();
   const { name, price, oldPrice, rating, reviews, image, badge, weight, slug } = product;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleAddToCart = (e) => {
-    e.preventDefault(); // Prevent navigating if wrapped in a link (though it is not here, good practice)
+    e.preventDefault();
     addToCart(product, 1, weight || '1L');
     setCartOpen(true);
   };
 
-  // Function to determine image source (handle both imported assets and paths)
   const getImageSource = () => {
     if (assetMap[image]) return assetMap[image];
     if (typeof image === 'string' && image.startsWith('http')) return image;
-    return groundnutImg; // Fallback
+    return groundnutImg;
   };
 
   const productPath = `/product/${slug || 'cold-pressed-groundnut-oil'}`;
@@ -49,8 +50,9 @@ const ProductCard = ({ product }) => {
     <motion.div
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3 }}
+      style={{ height: '100%' }}
     >
-      <Card sx={{ position: 'relative', height: '100%', borderRadius: 0, overflow: 'visible' }}>
+      <Card sx={{ position: 'relative', height: '100%', borderRadius: 0, overflow: 'visible', maxWidth: isMobile ? '280px' : '100%', mx: 'auto' }}>
         {badge && (
           <Chip
             label={badge}
@@ -64,6 +66,8 @@ const ProductCard = ({ product }) => {
               color: '#FFF',
               fontWeight: 700,
               borderRadius: 0,
+              fontSize: isMobile ? '0.65rem' : '0.75rem',
+              height: isMobile ? '20px' : '24px'
             }}
           />
         )}
@@ -76,19 +80,20 @@ const ProductCard = ({ product }) => {
             zIndex: 2,
             backgroundColor: 'rgba(255,255,255,0.8)',
             '&:hover': { backgroundColor: '#FFF' },
+            padding: isMobile ? '4px' : '8px'
           }}
         >
-          <FavoriteBorder fontSize="small" />
+          <FavoriteBorder fontSize={isMobile ? "inherit" : "small"} />
         </IconButton>
 
         <Link to={productPath}>
-          <Box sx={{ p: 2, backgroundColor: '#F5F5F5' }}>
+          <Box sx={{ p: isMobile ? 1.5 : 2, backgroundColor: '#F5F5F5' }}>
             <CardMedia
               component="img"
               image={getImageSource()}
               alt={name}
               sx={{
-                height: 200,
+                height: isMobile ? 140 : 200,
                 objectFit: 'contain',
                 mixBlendMode: 'multiply',
               }}
@@ -96,58 +101,61 @@ const ProductCard = ({ product }) => {
           </Box>
         </Link>
 
-        <CardContent sx={{ textAlign: 'center', pb: 1 }}>
-          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+        <CardContent sx={{ textAlign: 'center', pb: 1, px: isMobile ? 1 : 2 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, fontSize: isMobile ? '0.65rem' : '0.75rem' }}>
             {weight}
           </Typography>
           <Typography 
-            variant="h6" 
             component={Link} 
             to={productPath}
             sx={{ 
               mt: 0.5, 
               mb: 1, 
-              height: '3.6em', 
+              height: '2.8em', 
               overflow: 'hidden', 
-              lineClamp: 2, 
               display: '-webkit-box', 
               WebkitBoxOrient: 'vertical', 
               WebkitLineClamp: 2,
               textDecoration: 'none',
               color: 'inherit',
+              fontSize: isMobile ? '0.9rem' : '1.1rem',
+              fontWeight: 600,
+              lineHeight: 1.4,
               '&:hover': { color: 'primary.main' }
             }}
           >
             {name}
           </Typography>
           
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mb: 1 }}>
-            <Rating value={rating} precision={0.5} size="small" readOnly />
-            <Typography variant="caption" color="text.secondary">
-              ({reviews})
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 0.5, mb: 1 }}>
+            <Rating value={rating} precision={0.5} size="small" sx={{ fontSize: isMobile ? '0.8rem' : '1rem' }} readOnly />
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: isMobile ? '0.65rem' : '0.75rem' }}>
+              ({reviews || 0})
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: 1 }}>
-            <Typography variant="h6" color="primary.main" sx={{ fontWeight: 700 }}>
+            <Typography color="primary.main" sx={{ fontWeight: 700, fontSize: isMobile ? '1.1rem' : '1.25rem' }}>
               ₹{price}
             </Typography>
             {oldPrice && (
-              <Typography variant="body2" color="text.secondary" sx={{ textDecoration: 'line-through' }}>
+              <Typography color="text.secondary" sx={{ textDecoration: 'line-through', fontSize: isMobile ? '0.8rem' : '0.9rem' }}>
                 ₹{oldPrice}
               </Typography>
             )}
           </Box>
         </CardContent>
 
-        <Box sx={{ px: 2, pb: 2 }}>
+        <Box sx={{ px: isMobile ? 1.5 : 2, pb: 2 }}>
           <Button
             fullWidth
             variant="outlined"
-            startIcon={<AddShoppingCart />}
+            startIcon={<AddShoppingCart sx={{ fontSize: isMobile ? '1rem !important' : 'inherit' }} />}
             sx={{
               borderColor: 'primary.main',
               color: 'primary.main',
+              fontSize: isMobile ? '0.75rem' : '0.875rem',
+              py: isMobile ? 0.8 : 1,
               '&:hover': {
                 backgroundColor: 'primary.main',
                 color: '#FFF',

@@ -154,7 +154,7 @@ const OurOils = () => {
   }, []);
 
   return (
-    <Box sx={{ pb: 10 }}>
+    <Box>
       <SEO
         title="Our Premium Oil Range - Amrutha Dharee"
         description="Explore our complete collection of wood cold-pressed oils. From culinary essentials like Groundnut and Mustard to healing oils like Neem and Castor."
@@ -174,10 +174,28 @@ const OurOils = () => {
       >
         <Container maxWidth="md">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <Typography variant="h2" sx={{ fontWeight: 800, mb: 3, fontSize: { xs: '2.5rem', md: '4rem' } }}>
+            <Typography
+              variant="h2"
+              sx={{
+                fontWeight: 800,
+                mb: 3,
+                fontSize: { xs: '3rem', md: '4rem' },
+                color: '#FFFFFF'
+              }}
+            >
               PREMIUM NATURAL OILS
             </Typography>
-            <Typography variant="h5" sx={{ opacity: 0.9, lineHeight: 1.6, fontWeight: 300 }}>
+            <Typography
+              variant="h5"
+              sx={{
+                lineHeight: 1.6,
+                fontWeight: 400,
+                maxWidth: '800px',
+                mx: 'auto',
+                color: '#FFFFFF',
+                fontSize: { xs: '1.2rem', md: '1.6rem' }
+              }}
+            >
               Experience the purity and wellness of nature with Amrutha Dharee. Our oils are cold-pressed and made from the finest natural ingredients to nourish and rejuvenate your body and mind.
             </Typography>
           </motion.div>

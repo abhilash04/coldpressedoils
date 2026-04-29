@@ -6,7 +6,7 @@ import logo from '../../assets/amruthadharee_logo.png';
 
 const Footer = () => {
   return (
-    <Box sx={{ backgroundColor: '#1B1F23', color: '#FFFFFF', pt: 8, pb: 4, mt: 10 }}>
+    <Box sx={{ backgroundColor: '#1B1F23', color: '#FFFFFF', pt: 8, pb: 4 }}>
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           {/* Brand Info */}
@@ -16,10 +16,10 @@ const Footer = () => {
               src={logo}
               alt="Amrutha Dharee"
               sx={{
-                height: 50,
+                height: 100,
                 width: 'auto',
                 mb: 2,
-                filter: 'brightness(0) invert(1) opacity(0.9)' // Making it white for the dark footer
+                // filter: 'brightness(0) invert(1) opacity(0.9)' // Making it white for the dark footer
               }}
             />
             <Typography variant="body2" sx={{ opacity: 0.8, mb: 2, lineHeight: 1.8 }}>

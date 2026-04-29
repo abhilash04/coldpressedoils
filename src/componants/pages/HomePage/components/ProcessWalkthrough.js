@@ -1,9 +1,9 @@
-import React from 'react';
-import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { motion } from 'framer-motion';
 
 const ProcessWalkthrough = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const steps = [
     {
@@ -29,14 +29,14 @@ const ProcessWalkthrough = () => {
   ];
 
   return (
-    <Box sx={{ py: { xs: 6, md: 12 }, bgcolor: '#ffffff' }}>
+    <Box sx={{ py: { xs: 3, md: 6 }, bgcolor: '#ffffff' }}>
       <Container maxWidth="lg">
-        <Typography 
-          variant="h3" 
-          align="center" 
-          gutterBottom 
-          sx={{ 
-            fontWeight: 800, 
+        <Typography
+          variant="h3"
+          align="center"
+          gutterBottom
+          sx={{
+            fontWeight: 800,
             mb: 2,
             fontSize: { xs: '1.8rem', md: '3rem' }
           }}

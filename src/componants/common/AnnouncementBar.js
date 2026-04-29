@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, Typography, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,6 +14,8 @@ const announcements = [
 const AnnouncementBar = () => {
   const [current, setCurrent] = useState(0);
   const [visible, setVisible] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -29,14 +31,14 @@ const AnnouncementBar = () => {
       sx={{
         bgcolor: '#2D6A4F',
         color: '#fff',
-        py: 0.8,
-        px: { xs: 4, md: 2 },
+        py: isMobile ? 0.6 : 0.8,
+        px: isMobile ? 0 : 2,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
         overflow: 'hidden',
-        minHeight: 36,
+        minHeight: isMobile ? 32 : 36,
       }}
     >
       <AnimatePresence mode="wait">
@@ -46,14 +48,20 @@ const AnnouncementBar = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.4 }}
-          style={{ textAlign: 'center' }}
+          style={{
+            textAlign: 'center',
+            width: '100%',
+            padding: isMobile ? '0 30px' : '0'
+          }}
         >
           <Typography
             variant="caption"
             sx={{
               fontWeight: 600,
-              letterSpacing: 0.5,
-              fontSize: { xs: '0.7rem', md: '0.82rem' },
+              letterSpacing: 0.2,
+              fontSize: isMobile ? '0.62rem' : '0.82rem',
+              display: 'block',
+              lineHeight: 1.5,
             }}
           >
             {announcements[current]}
@@ -64,9 +72,14 @@ const AnnouncementBar = () => {
       <IconButton
         size="small"
         onClick={() => setVisible(false)}
-        sx={{ position: 'absolute', right: 6, color: 'rgba(255,255,255,0.75)', p: 0.3 }}
+        sx={{
+          position: 'absolute',
+          right: isMobile ? 6 : 6,
+          color: 'rgba(255,255,255,0.75)',
+          p: 0.3
+        }}
       >
-        <Close sx={{ fontSize: 15 }} />
+        <Close sx={{ fontSize: isMobile ? 14 : 15 }} />
       </IconButton>
     </Box>
   );

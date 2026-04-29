@@ -10,7 +10,7 @@ const Hero = () => {
     <Box
       sx={{
         position: 'relative',
-        height: { xs: '80vh', md: '90vh' },
+        height: { xs: '40vh', md: '80vh' },
         width: '100%',
         overflow: 'hidden',
         display: 'flex',
@@ -56,25 +56,27 @@ const Hero = () => {
                 variant="h1"
                 sx={{
                   color: '#FFF',
-                  fontSize: { xs: '2.5rem', md: '4.5rem' },
+                  fontSize: isMobile ? '2.5rem' : '4.5rem',
                   lineHeight: 1.1,
                   mb: 2,
+                  fontWeight: 800
                 }}
               >
                 A Legacy of 75 Years <br />
-                <Box component="span" sx={{ color: 'primary.main' }}>
+                <Box component="span" sx={{ color: '#a6cebcff' }}>
                   in Every Drop
                 </Box>
               </Typography>
-              
+
               <Typography
-                variant="h5"
                 sx={{
                   color: 'rgba(255,255,255,0.9)',
                   fontWeight: 400,
+                  fontSize: isMobile ? '1.2rem' : '1.2rem',
                   mb: 4,
                   maxWidth: '500px',
                   fontFamily: '"Inter", sans-serif',
+                  lineHeight: 1.6
                 }}
               >
                 Cold pressed. Chemical free. Pure from nature.
@@ -87,9 +89,9 @@ const Hero = () => {
                   color="primary"
                   size="large"
                   sx={{
-                    px: 4,
+                    px: isMobile ? 3 : 4,
                     py: 1.5,
-                    fontSize: '1rem',
+                    fontSize: isMobile ? '0.9rem' : '1rem',
                   }}
                   href="/shop"
                 >
@@ -100,9 +102,9 @@ const Hero = () => {
                   sx={{
                     color: '#FFF',
                     borderColor: '#FFF',
-                    px: 4,
+                    px: isMobile ? 3 : 4,
                     py: 1.5,
-                    fontSize: '1rem',
+                    fontSize: isMobile ? '0.9rem' : '1rem',
                     '&:hover': {
                       borderColor: 'primary.main',
                       color: 'primary.main',

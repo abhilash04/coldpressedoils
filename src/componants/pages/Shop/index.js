@@ -12,6 +12,7 @@ import {
   MenuItem,
   Drawer,
   IconButton,
+  Button,
   useTheme,
   useMediaQuery,
   Skeleton
@@ -110,34 +111,128 @@ const ShopPage = () => {
 
           {/* Product Grid Area */}
           <Grid item xs={12} md={9}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                {filters.category ? filters.category.replace('-', ' ').toUpperCase() : 'ALL PRODUCTS'}
-                <Typography variant="caption" sx={{ ml: 2, color: 'text.secondary', fontWeight: 400 }}>
-                  Showing {products.length} results
-                </Typography>
-              </Typography>
-
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                {isMobile && (
-                  <IconButton onClick={handleDrawerToggle}>
-                    <FilterIcon />
-                  </IconButton>
-                )}
-                <FormControl size="small" sx={{ minWidth: 150 }}>
-                  <InputLabel>Sort By</InputLabel>
-                  <Select
-                    value={filters.sortBy}
-                    label="Sort By"
-                    onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
+            {isMobile ? (
+              /* Premium Mobile Layout */
+              <Box sx={{ mb: 6 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    mb: 4,
+                    textAlign: 'center'
+                  }}
+                >
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      fontWeight: 900,
+                      color: 'primary.main',
+                      letterSpacing: -1,
+                      textTransform: 'uppercase',
+                      lineHeight: 1.1
+                    }}
                   >
-                    <MenuItem value="relevance">Relevance</MenuItem>
-                    <MenuItem value="price-low">Price: Low to High</MenuItem>
-                    <MenuItem value="price-high">Price: High to Low</MenuItem>
-                  </Select>
-                </FormControl>
+                    {filters.category ? filters.category.replace('-', ' ').toUpperCase() : 'ALL PRODUCTS'}
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 1.5 }}>
+                    <Box sx={{ width: 40, height: 2, bgcolor: '#B7791F' }} />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary',
+                        fontWeight: 800,
+                        letterSpacing: 2,
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      {products.length} AUTHENTIC PRODUCTS
+                    </Typography>
+                  </Box>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    bgcolor: '#FFF',
+                    border: '1px solid #EAEAEA',
+                    borderRadius: 0,
+                    boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                    overflow: 'hidden'
+                  }}
+                >
+                  <Button
+                    fullWidth
+                    startIcon={<FilterIcon />}
+                    onClick={handleDrawerToggle}
+                    sx={{
+                      flex: 1,
+                      py: 2,
+                      color: 'text.primary',
+                      fontWeight: 700,
+                      borderRadius: 0,
+                      borderRight: '1px solid #EAEAEA',
+                      '&:hover': { bgcolor: '#F9FAF4' },
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    FILTER
+                  </Button>
+                  <Box sx={{ flex: 1.2, position: 'relative' }}>
+                    <Select
+                      fullWidth
+                      value={filters.sortBy}
+                      onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
+                      displayEmpty
+                      renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '0.8rem' }}>
+                            {selected ? selected.replace('-', ' ').toUpperCase() : 'RELEVANCE'}
+                          </Typography>
+                        </Box>
+                      )}
+                      sx={{
+                        height: '100%',
+                        borderRadius: 0,
+                        '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '& .MuiSelect-select': { py: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }
+                      }}
+                    >
+                      <MenuItem value="relevance">Relevance</MenuItem>
+                      <MenuItem value="price-low">Price: Low to High</MenuItem>
+                      <MenuItem value="price-high">Price: High to Low</MenuItem>
+                    </Select>
+                  </Box>
+                </Box>
               </Box>
-            </Box>
+            ) : (
+              /* Original Desktop Layout */
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+                <Box>
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                    {filters.category ? filters.category.replace('-', ' ').toUpperCase() : 'ALL PRODUCTS'}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 400, display: 'block' }}>
+                    Showing {products.length} results
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                  <FormControl size="small" sx={{ minWidth: 170 }}>
+                    <InputLabel>Sort By</InputLabel>
+                    <Select
+                      value={filters.sortBy}
+                      label="Sort By"
+                      onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
+                    >
+                      <MenuItem value="relevance">Relevance</MenuItem>
+                      <MenuItem value="price-low">Price: Low to High</MenuItem>
+                      <MenuItem value="price-high">Price: High to Low</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Box>
+            )}
 
             <Grid container spacing={3}>
               {loading ? (

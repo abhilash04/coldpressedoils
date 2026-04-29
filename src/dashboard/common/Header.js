@@ -11,6 +11,7 @@ import {
   ListItem,
   List,
   useMediaQuery,
+  useTheme
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -22,6 +23,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import WindowSharpIcon from "@mui/icons-material/WindowSharp";
 import TranslateSharpIcon from "@mui/icons-material/TranslateSharp";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
+import Logo from "../../assets/amruthadharee_logo.png";
 import { 
   Tabs, 
   Tab as MuiTab 
@@ -47,12 +49,9 @@ const Header = ({ toggleSideNav }) => {
   const [value, setValue] = useState("1");
   const [activeItem, setActiveItem] = useState(0);
   const [openProfile, setOpenProfile] = useState(false);
-  const isMobileScreen = useMediaQuery(
-    "(min-width:360px) and (max-width:500px)"
-  );
-  const isSmallScreen = useMediaQuery(
-    "(min-width:1024px) and (max-width:1440px)"
-  );
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.between("md", "lg"));
 
   console.log(name, "stud");
   console.log(roles, "rol");
@@ -87,8 +86,8 @@ const Header = ({ toggleSideNav }) => {
     <>
       <Grid
         sx={{
-          width: isMobileScreen ? "100%" : "100%",
-          height: isMobileScreen ? "40px" : isSmallScreen ? "60px" : "90px",
+          width: isMobile ? "100%" : "100%",
+          height: isMobile ? "60px" : isSmallScreen ? "80px" : "110px",
           background: "rgba(255, 255, 255, 0.7)",
 
           top: 0,
@@ -101,8 +100,8 @@ const Header = ({ toggleSideNav }) => {
           md={12}
           xs={12}
           sx={{
-            px: isMobileScreen ? 1 : isSmallScreen ? 2 : 5,
-            py: isMobileScreen ? 1 : isSmallScreen ? 2 : 3,
+            px: isMobile ? 1 : isSmallScreen ? 2 : 5,
+            py: isMobile ? 1 : isSmallScreen ? 2 : 3,
             alignItems: "center",
             justifyContent: "space-between",
           }}
@@ -110,12 +109,12 @@ const Header = ({ toggleSideNav }) => {
           <Grid
             item
             md={4}
-            xs={0}
+            xs={6}
             sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "flex-start",
-              gap: isMobileScreen ? 2 : isSmallScreen ? 2 : 5,
+              gap: 0,
             }}
           >
             <Grid
@@ -130,12 +129,24 @@ const Header = ({ toggleSideNav }) => {
                 sx={{
                   fontSize: isSmallScreen ? 20 : 25,
                   color: "#1d1a57",
-                  display: isMobileScreen ? "none" : "block",
+                  display: "block",
                 }}
                 onClick={toggleSideNav}
               />
             </Grid>
-            <Grid sx={{ background: "#FFF", borderRadius: "5px" }}>
+            <Box
+              component="img"
+              src={Logo}
+              alt="logo"
+              sx={{
+                height: isMobile ? "45px" : isSmallScreen ? "65px" : "90px",
+                width: "auto",
+                cursor: "pointer",
+                ml: 0
+              }}
+              onClick={() => navigate("/")}
+            />
+            <Grid sx={{ background: "#FFF", borderRadius: "5px", display: isMobile ? "none" : "block" }}>
               <TextField
                 type="text"
                 size="small"
@@ -147,22 +158,22 @@ const Header = ({ toggleSideNav }) => {
                       <SearchIcon
                         sx={{
                           color: "#1D1A57",
-                          fontSize: isMobileScreen ? 10 : "auto",
+                          fontSize: isMobile ? 10 : "auto",
                         }}
                       />
                     </InputAdornment>
                   ),
                 }}
                 sx={{
-                  width: isMobileScreen ? "90px" : "200px",
-                  fontSize: isMobileScreen ? 10 : isSmallScreen ? 12 : "auto",
+                  width: isMobile ? "90px" : "200px",
+                  fontSize: isMobile ? 10 : isSmallScreen ? 12 : "auto",
                   "& .MuiInputBase-input": {
-                    height: isMobileScreen
+                    height: isMobile
                       ? "6px"
                       : isSmallScreen
                       ? "12px"
                       : "15px",
-                    fontSize: isMobileScreen ? 10 : isSmallScreen ? 12 : "auto",
+                    fontSize: isMobile ? 10 : isSmallScreen ? 12 : "auto",
                   },
                   border: "1px solid #1d1a57",
                   borderRadius: "5px",
@@ -173,11 +184,12 @@ const Header = ({ toggleSideNav }) => {
           <Grid
             item
             md={4}
+            xs={6}
             sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "flex-end",
-              gap: isMobileScreen ? 2 : 4,
+              gap: isMobile ? 2 : 4,
             }}
           >
             <Grid
@@ -189,7 +201,7 @@ const Header = ({ toggleSideNav }) => {
             >
               <WindowSharpIcon
                 sx={{
-                  fontSize: isMobileScreen ? 10 : isSmallScreen ? 20 : 25,
+                  fontSize: isMobile ? 10 : isSmallScreen ? 20 : 25,
                   color: "#1d1a57",
                 }}
               />
@@ -203,7 +215,7 @@ const Header = ({ toggleSideNav }) => {
             >
               <TranslateSharpIcon
                 sx={{
-                  fontSize: isMobileScreen ? 10 : isSmallScreen ? 20 : 25,
+                  fontSize: isMobile ? 10 : isSmallScreen ? 20 : 25,
                   color: "#1d1a57",
                 }}
               />
@@ -217,22 +229,22 @@ const Header = ({ toggleSideNav }) => {
             >
               <NotificationsIcon
                 sx={{
-                  fontSize: isMobileScreen ? 10 : isSmallScreen ? 20 : 25,
+                  fontSize: isMobile ? 10 : isSmallScreen ? 20 : 25,
                   color: "#1d1a57",
                 }}
               />
             </Grid>
             <Grid
               sx={{
-                width: isMobileScreen ? 15 : isSmallScreen ? 30 : 40,
-                height: isMobileScreen ? 15 : isSmallScreen ? 30 : 40,
+                width: isMobile ? 15 : isSmallScreen ? 30 : 40,
+                height: isMobile ? 15 : isSmallScreen ? 30 : 40,
               }}
             >
               <Avatar
                 onClick={handleClick}
                 sx={{
-                  width: isMobileScreen ? 15 : isSmallScreen ? 30 : 40,
-                  height: isMobileScreen ? 15 : isSmallScreen ? 30 : 40,
+                  width: isMobile ? 15 : isSmallScreen ? 30 : 40,
+                  height: isMobile ? 15 : isSmallScreen ? 30 : 40,
                   cursor: "pointer",
                   backgroundColor: "#1D1A57",
                   borderRadius: "50%",
@@ -265,8 +277,8 @@ const Header = ({ toggleSideNav }) => {
                     display: "flex",
                     flexDirection: "column",
                     borderRadius: 20,
-                    py: isMobileScreen ? 1 : 2,
-                    width: isMobileScreen ? "175px" : "300px",
+                    py: isMobile ? 1 : 2,
+                    width: isMobile ? "175px" : "300px",
                   }}
                 >
                   <Grid
@@ -281,7 +293,7 @@ const Header = ({ toggleSideNav }) => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      mx: isMobileScreen ? 1 : 2,
+                      mx: isMobile ? 1 : 2,
                     }}
                   >
                     <Grid
@@ -298,8 +310,8 @@ const Header = ({ toggleSideNav }) => {
                       <Grid>
                         <Avatar
                           sx={{
-                            width: isMobileScreen ? 20 : 40,
-                            height: isMobileScreen ? 20 : 40,
+                            width: isMobile ? 20 : 40,
+                            height: isMobile ? 20 : 40,
                             cursor: "pointer",
                             backgroundColor: "#1D1A57",
                             borderRadius: "50%",
@@ -307,11 +319,11 @@ const Header = ({ toggleSideNav }) => {
                         />
                       </Grid>
 
-                      <Grid sx={{ mx: isMobileScreen ? 1 : 2 }}>
+                      <Grid sx={{ mx: isMobile ? 1 : 2 }}>
                         <Typography
                           sx={{
                             fontWeight: 600,
-                            fontSize: isMobileScreen ? "12px" : "16px",
+                            fontSize: isMobile ? "12px" : "16px",
                           }}
                         >
                           {name}
@@ -319,7 +331,7 @@ const Header = ({ toggleSideNav }) => {
                         <Typography
                           sx={{
                             color: "#95959B",
-                            fontSize: isMobileScreen ? "8px" : "13px",
+                            fontSize: isMobile ? "8px" : "13px",
                           }}
                         >
                           {roles}
@@ -342,13 +354,13 @@ const Header = ({ toggleSideNav }) => {
                       <LogoutSharpIcon
                         sx={{
                           color: "#1D1A57",
-                          fontSize: isMobileScreen ? 15 : 25,
+                          fontSize: isMobile ? 15 : 25,
                         }}
                       />
                     </Grid>
                   </Grid>
-                  <Grid sx={{ mt: isMobileScreen ? 1 : 3 }}>
-                  <Grid sx={{ mt: isMobileScreen ? 1 : 3 }}>
+                  <Grid sx={{ mt: isMobile ? 1 : 3 }}>
+                  <Grid sx={{ mt: isMobile ? 1 : 3 }}>
                     <Box sx={{ width: '100%', borderBottom: 1, borderColor: 'divider' }}>
                       <Tabs 
                         value={value} 
