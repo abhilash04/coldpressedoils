@@ -187,7 +187,7 @@ const ProductDetail = () => {
               <Box sx={{ position: 'relative' }}>
                 <Box
                   component="img"
-                  src={getMappedImage(product.images[selectedImage])}
+                  src={getMappedImage(product.images?.[selectedImage])}
                   sx={{ width: '100%', height: 'auto', backgroundColor: '#F5F5F5', mb: 2 }}
                 />
 
@@ -211,7 +211,7 @@ const ProductDetail = () => {
               </Box>
 
               <Grid container spacing={2}>
-                {product.images.map((imgKey, idx) => (
+                {product.images?.map((imgKey, idx) => (
                   <Grid item xs={3} key={idx}>
                     <Box
                       component="img"
@@ -263,7 +263,7 @@ const ProductDetail = () => {
               onChange={(e, nextSize) => nextSize && setSize(nextSize)}
               sx={{ mb: 4 }}
             >
-              {product.variants.map((v) => (
+              {product.variants?.map((v) => (
                 <ToggleButton key={v} value={v} sx={{ px: 3 }}>{v}</ToggleButton>
               ))}
             </ToggleButtonGroup>
@@ -326,7 +326,7 @@ const ProductDetail = () => {
                   <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #EEE' }}>
                     <Table size="small">
                       <TableBody>
-                        {product.nutrition.map((row) => (
+                        {product.nutrition?.map((row) => (
                           <TableRow key={row.label}>
                             <TableCell sx={{ fontWeight: 600 }}>{row.label}</TableCell>
                             <TableCell align="right">{row.value}</TableCell>
@@ -338,7 +338,7 @@ const ProductDetail = () => {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>KEY BENEFITS</Typography>
-                  {product.benefits.map((b, i) => (
+                  {product.benefits?.map((b, i) => (
                     <Box key={i} sx={{ display: 'flex', gap: 1, mb: 1 }}>
                       <KeyboardArrowRight color="primary" />
                       <Typography variant="body2">{b}</Typography>
