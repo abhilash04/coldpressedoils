@@ -40,6 +40,7 @@ import { Modal, Backdrop, Fade, IconButton as MuiIconButton } from '@mui/materia
 import videoSource from '../../../assets/video1.mp4';
 import SEO from '../../common/SEO';
 import { apiList, invokeGetApi } from '../../../services/apiServices';
+import { config } from '../../../config/config';
 
 // Assets
 import groundnutImg from '../../../assets/ArtBoard-img-3.jpg';
@@ -102,7 +103,11 @@ const ProductDetail = () => {
   }, [slug]);
 
   const getMappedImage = (imgKey) => {
-    return assetMap[imgKey] || groundnutImg;
+    if (assetMap[imgKey]) return assetMap[imgKey];
+    if (typeof imgKey === 'string' && imgKey.startsWith('/uploads')) {
+      return `${config.apiUrl}${imgKey}`;
+    }
+    return groundnutImg;
   };
 
   if (loading) return (

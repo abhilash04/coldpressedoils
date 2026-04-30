@@ -69,9 +69,8 @@ export const apiList = {
   allProducts: "/all",
   getAllProducts: "/getAllProducts",
   addProduct: "/addProduct",
-  getProduct: "/getProduct",
-  updateProduct: "/updateProduct",
-  deleteProduct: "/deleteProduct",
+  updateProduct: "/updateProduct", // PUT /updateProduct/{id}
+  deleteProduct: "/deleteProduct", // DELETE /deleteProduct/{id}
   updateProductGallery: "/updateProductGallery",
   getAllCategory: "/getAllCategory",
   addCategory: "/addCategory",

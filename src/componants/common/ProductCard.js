@@ -3,6 +3,7 @@ import { Card, CardMedia, CardContent, Typography, Button, Box, IconButton, Rati
 import { FavoriteBorder, AddShoppingCart } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
+import { config } from '../../config/config';
 
 import { Link } from 'react-router-dom';
 
@@ -41,6 +42,7 @@ const ProductCard = ({ product }) => {
   const getImageSource = () => {
     if (assetMap[image]) return assetMap[image];
     if (typeof image === 'string' && image.startsWith('http')) return image;
+    if (typeof image === 'string' && image.startsWith('/uploads')) return `${config.apiUrl}${image}`;
     return groundnutImg;
   };
 

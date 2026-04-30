@@ -256,6 +256,13 @@ const ProductCard = ({ onCartUpdate }) => {
             {productsData.map((item, idx) => {
               const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
               const quantity = cartItem ? cartItem.quantity : 0;
+              
+              const getImageSource = (item) => {
+                if (item.featuredImage && item.featuredImage.startsWith('/uploads')) {
+                  return `${config.apiUrl}${item.featuredImage}`;
+                }
+                return item.featuredImage;
+              };
 
               return (
                 <Box
@@ -271,7 +278,7 @@ const ProductCard = ({ onCartUpdate }) => {
                     minWidth: 250,
                     backgroundColor: "#fff",
                   }}
-                  onClick={() => navigate(`/products/${item.ogUrl}`)}
+                  onClick={() => navigate(`/product/${item.ogUrl}`)}
                 >
                   <Box sx={{ position: "absolute", top: 0, left: 16 }}>
                     <Chip
@@ -302,8 +309,8 @@ const ProductCard = ({ onCartUpdate }) => {
 
                   <CardMedia
                     component="img"
-                    image={item.featuredImage}
-                    alt={item.productImage}
+                    image={getImageSource(item)}
+                    alt={item.productName}
                     sx={{
                       objectFit: "contain",
                       width: "100%",
