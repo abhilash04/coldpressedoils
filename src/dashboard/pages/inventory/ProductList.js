@@ -62,15 +62,15 @@ const ProductList = () => {
         <Header toggleSideNav={toggleSideNav} />
         <Box sx={{ mt: 2 }}>
           <NavigatedComponent pathname={location.pathname} />
-          
+
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", my: 3 }}>
             <Typography variant="h4" sx={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, color: "#2D6A4F" }}>
               Inventory Manager
             </Typography>
-            <Button 
-              variant="contained" 
-              startIcon={<AddIcon />} 
-              onClick={() => navigate("/dashboard/add-product")}
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => navigate("/inventory-manager/add-new-product")}
               sx={{ bgcolor: "#2D6A4F", borderRadius: 0, "&:hover": { bgcolor: "#1B4332" } }}
             >
               ADD NEW PRODUCT
@@ -115,10 +115,10 @@ const ProductList = () => {
                         <TableCell>{row.category_name || "Oils"}</TableCell>
                         <TableCell>₹{row.price}</TableCell>
                         <TableCell>
-                          <Chip 
-                            label={row.status?.toUpperCase() || "ACTIVE"} 
-                            size="small" 
-                            sx={{ bgcolor: row.status === 'active' ? "#E8F5E9" : "#FFF3E0", color: row.status === 'active' ? "#2E7D32" : "#E65100", fontWeight: 700, borderRadius: 0 }} 
+                          <Chip
+                            label={row.status?.toUpperCase() || "ACTIVE"}
+                            size="small"
+                            sx={{ bgcolor: row.status === 'active' ? "#E8F5E9" : "#FFF3E0", color: row.status === 'active' ? "#2E7D32" : "#E65100", fontWeight: 700, borderRadius: 0 }}
                           />
                         </TableCell>
                         <TableCell>{row.rating} ⭐</TableCell>

@@ -41,20 +41,38 @@ const FeaturedProducts = () => {
 
   const sliderSettings = {
     dots: true,
-    infinite: true,
+    infinite: products.length > 3,
     speed: 500,
-    slidesToShow: 1,
+    slidesToShow: 3,
     slidesToScroll: 1,
     arrows: false,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: products.length > 2,
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          infinite: products.length > 1,
+        }
+      }
+    ],
     appendDots: dots => (
       <Box sx={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 0.5,
-        mt: 4,
+        mt: isMobile ? 2 : 4,
         position: 'relative',
-        bottom: -10,
+        bottom: -2,
         // Override Slick's default li styling
         "& ul": {
           display: 'flex',
@@ -74,38 +92,7 @@ const FeaturedProducts = () => {
           }
         }
       }}>
-        <IconButton
-          size="small"
-          onClick={() => sliderRef.current?.slickPrev()}
-          sx={{
-            color: 'primary.main',
-            p: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transform: 'translateY(-6px)',
-            mr: 2 // Space after left arrow
-          }}
-        >
-          <ArrowBackIosNew sx={{ fontSize: '1.2rem' }} />
-        </IconButton>
-
         {dots}
-
-        <IconButton
-          size="small"
-          onClick={() => sliderRef.current?.slickNext()}
-          sx={{
-            color: 'primary.main',
-            p: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transform: 'translateY(-6px)'
-          }}
-        >
-          <ArrowForwardIos sx={{ fontSize: '1.2rem', ml: 0.5 }} />
-        </IconButton>
       </Box>
     ),
     customPaging: i => (
@@ -130,32 +117,60 @@ const FeaturedProducts = () => {
   };
 
   return (
-    <Box sx={{ py: isMobile ? 4 : 6, backgroundColor: '#FFF', overflow: 'hidden' }}>
+    <Box sx={{ pt: isMobile ? 4 : 6, pb: isMobile ? 1 : 2, backgroundColor: '#FFF', overflow: 'hidden' }}>
       <Container maxWidth="lg">
-        <Box sx={{ textAlign: 'center', mb: isMobile ? 4 : 6 }}>
-          <Typography variant={isMobile ? "h4" : "h3"} gutterBottom sx={{ fontWeight: 700 }}>
-            Our Best Sellers
-          </Typography>
-          <Box
-            sx={{
-              width: 80,
-              height: 2,
-              backgroundColor: 'primary.main',
-              margin: '0 auto',
-              position: 'relative',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                top: -4,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: 10,
-                height: 10,
+        <Box sx={{
+          position: 'relative',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          mb: isMobile ? 4 : 6,
+          minHeight: 60
+        }}>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant={isMobile ? "h4" : "h3"} gutterBottom sx={{ fontWeight: 700 }}>
+              Our Best Sellers
+            </Typography>
+            <Box
+              sx={{
+                width: 80,
+                height: 2,
                 backgroundColor: 'primary.main',
-                borderRadius: '50%',
-              },
+                margin: '0 auto',
+                position: 'relative',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  top: -4,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: 10,
+                  height: 10,
+                  backgroundColor: 'primary.main',
+                  borderRadius: '50%',
+                },
+              }}
+            />
+          </Box>
+          <Button
+            variant="text"
+            color="primary"
+            size="small"
+            href="/shop"
+            sx={{
+              position: 'absolute',
+              right: 0,
+              bottom: isMobile ? -20 : 0, // Adjust for mobile if needed
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '1rem',
+              '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
+              display: 'flex',
+              alignItems: 'center'
             }}
-          />
+          >
+            View All &rarr;
+          </Button>
         </Box>
 
         {loading ? (
@@ -169,38 +184,64 @@ const FeaturedProducts = () => {
             ))}
           </Grid>
         ) : (
-          isMobile ? (
-            <Box sx={{ px: 1, pb: 6 }}>
-              <Slider ref={sliderRef} {...sliderSettings}>
-                {products.map((product) => (
-                  <Box key={product.id} sx={{ px: 1, pb: 1 }}>
-                    <ProductCard product={product} />
-                  </Box>
-                ))}
-              </Slider>
-            </Box>
-          ) : (
-            <Grid container spacing={4}>
+          <Box sx={{ position: 'relative', px: isMobile ? 1 : 4, pb: 1 }}>
+            <IconButton
+              onClick={() => sliderRef.current?.slickPrev()}
+              sx={{
+                position: 'absolute',
+                left: isMobile ? -10 : -20,
+                top: '40%',
+                transform: 'translateY(-50%)',
+                zIndex: 10,
+                backgroundColor: 'white',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                color: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                },
+                width: 40,
+                height: 40,
+                display: products.length > (isMobile ? 1 : 3) ? 'flex' : 'none'
+              }}
+            >
+              <ArrowBackIosNew sx={{ fontSize: '1.2rem' }} />
+            </IconButton>
+
+            <Slider ref={sliderRef} {...sliderSettings}>
               {products.map((product) => (
-                <Grid item sm={4} md={4} key={product.id}>
+                <Box key={product.id} sx={{ px: isMobile ? 1 : 2, pb: 1 }}>
                   <ProductCard product={product} />
-                </Grid>
+                </Box>
               ))}
-            </Grid>
-          )
+            </Slider>
+
+            <IconButton
+              onClick={() => sliderRef.current?.slickNext()}
+              sx={{
+                position: 'absolute',
+                right: isMobile ? -10 : -20,
+                top: '40%',
+                transform: 'translateY(-50%)',
+                zIndex: 10,
+                backgroundColor: 'white',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                color: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                },
+                width: 40,
+                height: 40,
+                display: products.length > (isMobile ? 1 : 3) ? 'flex' : 'none'
+              }}
+            >
+              <ArrowForwardIos sx={{ fontSize: '1.2rem' }} />
+            </IconButton>
+          </Box>
         )}
 
-        <Box sx={{ textAlign: 'center', mt: isMobile ? 2 : 8 }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-            href="/shop"
-            sx={{ px: isMobile ? 4 : 6 }}
-          >
-            View All Products
-          </Button>
-        </Box>
+
       </Container>
     </Box>
   );
