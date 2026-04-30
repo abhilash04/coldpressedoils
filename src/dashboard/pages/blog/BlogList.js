@@ -56,10 +56,10 @@ const BlogList = () => {
             <Typography variant="h4" sx={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, color: "#2D6A4F" }}>
               Blog Manager
             </Typography>
-            <Button 
-              variant="contained" 
-              startIcon={<AddIcon />} 
-              onClick={() => navigate("/dashboard/add-blog")}
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => navigate("/blog-manager/add-blog")}
               sx={{ bgcolor: "#2D6A4F", borderRadius: 0, "&:hover": { bgcolor: "#1B4332" } }}
             >
               WRITE NEW BLOG
@@ -98,10 +98,10 @@ const BlogList = () => {
                         <TableCell>{row.category || "General"}</TableCell>
                         <TableCell sx={{ color: "#2D6A4F", fontFamily: "monospace" }}>/{row.og_url}</TableCell>
                         <TableCell>
-                          <Chip 
-                            label={row.status?.toUpperCase() || "ACTIVE"} 
-                            size="small" 
-                            sx={{ bgcolor: row.status === 'Active' ? "#E8F5E9" : "#F5F5F5", color: row.status === 'Active' ? "#2E7D32" : "#757575", fontWeight: 700, borderRadius: 0 }} 
+                          <Chip
+                            label={row.status?.toUpperCase() || "ACTIVE"}
+                            size="small"
+                            sx={{ bgcolor: row.status === 'Active' ? "#E8F5E9" : "#F5F5F5", color: row.status === 'Active' ? "#2E7D32" : "#757575", fontWeight: 700, borderRadius: 0 }}
                           />
                         </TableCell>
                         <TableCell align="right">
