@@ -12,12 +12,12 @@ const HealthEducation = () => {
           <Grid item xs={12} md={6}>
             <Box
               component="img"
-              src="/assets/images/groundnut_oil.png"
+              src="/assets/images/hero_banner.png"
               alt="Health Benefits"
-              sx={{ 
-                width: '100%', 
-                borderRadius: 0, 
-                boxShadow: { xs: '10px 10px 0px #2D6A4F', md: '20px 20px 0px #2D6A4F' } 
+              sx={{
+                width: '100%',
+                borderRadius: 0,
+                boxShadow: { xs: '10px 10px 0px #2D6A4F', md: '20px 20px 0px #2D6A4F' }
               }}
             />
           </Grid>
@@ -26,11 +26,11 @@ const HealthEducation = () => {
               Why Cold Pressed Oils are Better for You
             </Typography>
             <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary', lineHeight: 1.8, fontSize: { xs: '0.9rem', md: '1.1rem' } }}>
-              Refined oils are processed at high temperatures and treated with chemicals, 
-              stripping them of their natural flavor and nutrients. Our wood-pressed oils 
+              Refined oils are processed at high temperatures and treated with chemicals,
+              stripping them of their natural flavor and nutrients. Our wood-pressed oils
               retain the original molecular structure.
             </Typography>
-            
+
             <List sx={{ mb: 4 }}>
               {[
                 'Rich in Omega-3 & Omega-6 Fatty Acids',
@@ -42,14 +42,14 @@ const HealthEducation = () => {
                   <ListItemIcon sx={{ minWidth: { xs: 30, md: 40 }, color: 'primary.main' }}>
                     <CheckCircleOutline fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary={item} 
-                    primaryTypographyProps={{ sx: { fontSize: { xs: '0.875rem', md: '1rem' } } }} 
+                  <ListItemText
+                    primary={item}
+                    primaryTypographyProps={{ sx: { fontSize: { xs: '0.875rem', md: '1rem' } } }}
                   />
                 </ListItem>
               ))}
             </List>
-            
+
             <Button variant="contained" color="primary" size="large" href="/blog" fullWidth={isMobile}>
               Read Our Health Blog
             </Button>

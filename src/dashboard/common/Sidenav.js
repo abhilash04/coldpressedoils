@@ -265,35 +265,35 @@ const Sidebar = () => {
           },
         ],
       },
-      {
-        text: "Blog",
-        icon: <BlogIcon />,
-        subItems: [
-          { text: "Add Blog", path: "/blog-manager/add-blog", icon: <PlusIcon /> },
-          { text: "Blog List", path: "/blog-manager/blog-list", icon: <ListIcon /> },
-        ],
-      },
-      {
-        text: "SEO",
-        icon: <BlogIcon />,
-        subItems: [
-          {
-            text: "Add Site",
-            path: "/seo-manager/add-sites",
-            icon: <AddIcon />,
-          },
-          {
-            text: "Static Page",
-            path: "/seo-manager/static-pages",
-            icon: <ArticleOutlinedIcon />,
-          },
-          {
-            text: "Blog",
-            path: "/seo-manager/blog",
-            icon: <ArticleOutlinedIcon />,
-          },
-        ],
-      },
+      // {
+      //   text: "Blog",
+      //   icon: <BlogIcon />,
+      //   subItems: [
+      //     { text: "Add Blog", path: "/blog-manager/add-blog", icon: <PlusIcon /> },
+      //     { text: "Blog List", path: "/blog-manager/blog-list", icon: <ListIcon /> },
+      //   ],
+      // },
+      // {
+      //   text: "SEO",
+      //   icon: <BlogIcon />,
+      //   subItems: [
+      //     {
+      //       text: "Add Site",
+      //       path: "/seo-manager/add-sites",
+      //       icon: <AddIcon />,
+      //     },
+      //     {
+      //       text: "Static Page",
+      //       path: "/seo-manager/static-pages",
+      //       icon: <ArticleOutlinedIcon />,
+      //     },
+      //     {
+      //       text: "Blog",
+      //       path: "/seo-manager/blog",
+      //       icon: <ArticleOutlinedIcon />,
+      //     },
+      //   ],
+      // },
       // {
       //   text: "Web Approval",
       //   icon: <VerifiedUserIcon />,
@@ -310,22 +310,22 @@ const Sidebar = () => {
       //     },
       //   ],
       // },
-      {
-        text: "Blog Approval",
-        icon: <FactCheckIcon />,
-        subItems: [
-          {
-            text: "Blog List",
-            path: "/blog-approval/blog-approve-list",
-            icon: <BookIcon />,
-          },
-          {
-            text: "Approved Blog",
-            path: "/blog-approval/approved-blog-list",
-            icon: <LibraryBooksIcon />,
-          },
-        ],
-      },
+      // {
+      //   text: "Blog Approval",
+      //   icon: <FactCheckIcon />,
+      //   subItems: [
+      //     {
+      //       text: "Blog List",
+      //       path: "/blog-approval/blog-approve-list",
+      //       icon: <BookIcon />,
+      //     },
+      //     {
+      //       text: "Approved Blog",
+      //       path: "/blog-approval/approved-blog-list",
+      //       icon: <LibraryBooksIcon />,
+      //     },
+      //   ],
+      // },
     ].filter((item) => {
       for (let role of userRoles) {
         switch (role) {
