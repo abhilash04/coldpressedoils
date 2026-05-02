@@ -58,12 +58,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { config } from "../../config/config";
 import { getUser } from "../../global/redux/action";
 import BuildIcon from "@mui/icons-material/Build";
+import { useDashboard } from "../../context/DashboardContext";
+import MiniDrawer from "./IconSidenav";
 
 const drawerWidth = 240;
 
+
 const Sidebar = () => {
+  const { isSidebarCollapsed } = useDashboard();
   const navigate = useNavigate();
   const location = useLocation();
+
   const [open, setOpen] = useState(true);
   const [openSubList, setOpenSubList] = useState({});
   const isSmallScreen = useMediaQuery(
@@ -398,6 +403,10 @@ const Sidebar = () => {
   const openPopper = Boolean(anchorEl);
   const id = openPopper ? "simple-popover" : undefined;
 
+  if (isSidebarCollapsed) {
+    return <MiniDrawer />;
+  }
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -428,14 +437,14 @@ const Sidebar = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: isSmallScreen ? 50 : 75,
-              height: isSmallScreen ? 40 : 65,
+              width: isSmallScreen ? 120 : 180,
+              height: isSmallScreen ? 100 : 150,
             }}
           >
             <img
               src={Logo}
               alt="logo"
-              style={{ height: "100%", objectFit: "cover" }}
+              style={{ height: "100%", objectFit: "contain" }}
             />
           </Grid>
         </Grid>

@@ -408,14 +408,14 @@ export default function MiniDrawer() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: isMobileScreen ? 20 : isSmallScreen ? 50 : 75,
-              height: isMobileScreen ? 20 : isSmallScreen ? 40 : 65,
+              width: isMobileScreen ? 60 : isSmallScreen ? 75 : 95,
+              height: isMobileScreen ? 60 : isSmallScreen ? 70 : 90,
             }}
           >
             <img
               src={Logo}
               alt="logo"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </Grid>
         </Grid>
