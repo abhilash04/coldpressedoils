@@ -37,10 +37,20 @@ import FeedbackIcon from "@mui/icons-material/Feedback";
 import HistoryIcon from "@mui/icons-material/History";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import { useDashboard } from "../../context/DashboardContext";
 
-const Header = ({ toggleSideNav }) => {
+
+const Header = ({ toggleSideNav: propToggleSideNav }) => {
+  const { toggleSidebar } = useDashboard();
   const { name, roles } = useFetch();
   const location = useLocation();
+
+  const handleToggle = () => {
+    if (propToggleSideNav) {
+      propToggleSideNav();
+    }
+    toggleSidebar();
+  };
 
   const [cookies, , removeCookie] = useCookies([config.cookieName]);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -132,7 +142,7 @@ const Header = ({ toggleSideNav }) => {
                   color: "#1d1a57",
                   display: isMobileScreen ? "none" : "block",
                 }}
-                onClick={toggleSideNav}
+                onClick={handleToggle}
               />
             </Grid>
             <Grid sx={{ background: "#FFF", borderRadius: "5px" }}>

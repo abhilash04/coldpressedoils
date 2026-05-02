@@ -165,27 +165,27 @@ export default function MiniDrawer() {
       //     },
       //   ],
       // },
-      {
-        text: "Web Settings",
-        icon: <SettingsIcon />,
-        subItems: [
-          {
-            text: "Page List",
-            icon: <SchoolIcon />,
-            path: "/university-manager/college-list",
-          },
-          {
-            text: "Add New Page",
-            path: "/web-settings/add-new-page",
-            icon: <LibraryBooksIcon />,
-          },
-          {
-            text: "Locations",
-            path: "/web-settings/locations",
-            icon: <LocalLibraryIcon />,
-          },
-        ],
-      },
+      // {
+      //   text: "Web Settings",
+      //   icon: <SettingsIcon />,
+      //   subItems: [
+      //     {
+      //       text: "Page List",
+      //       icon: <SchoolIcon />,
+      //       path: "/university-manager/college-list",
+      //     },
+      //     {
+      //       text: "Add New Page",
+      //       path: "/web-settings/add-new-page",
+      //       icon: <LibraryBooksIcon />,
+      //     },
+      //     {
+      //       text: "Locations",
+      //       path: "/web-settings/locations",
+      //       icon: <LocalLibraryIcon />,
+      //     },
+      //   ],
+      // },
       {
         text: "Leads Manager",
         icon: <LeadsIcon />,
@@ -249,35 +249,35 @@ export default function MiniDrawer() {
       //     },
       //   ],
       // },
-      {
-        text: "Blog",
-        icon: <BlogIcon />,
-        subItems: [
-          { text: "Add Blog", path: "/blog-manager/add-blog", icon: <PlusIcon /> },
-          { text: "Blog List", path: "/blog-manager/blog-list", icon: <ListIcon /> },
-        ],
-      },
-      {
-        text: "SEO",
-        icon: <BlogIcon />,
-        subItems: [
-          {
-            text: "Add Site",
-            path: "/seo-manager/add-sites",
-            icon: <AddIcon />,
-          },
-          {
-            text: "Static Page",
-            path: "/seo-manager/static-pages",
-            icon: <ArticleOutlinedIcon />,
-          },
-          {
-            text: "Blog",
-            path: "/seo-manager/blog",
-            icon: <ArticleOutlinedIcon />,
-          },
-        ],
-      },
+      // {
+      //   text: "Blog",
+      //   icon: <BlogIcon />,
+      //   subItems: [
+      //     { text: "Add Blog", path: "/blog-manager/add-blog", icon: <PlusIcon /> },
+      //     { text: "Blog List", path: "/blog-manager/blog-list", icon: <ListIcon /> },
+      //   ],
+      // },
+      // {
+      //   text: "SEO",
+      //   icon: <BlogIcon />,
+      //   subItems: [
+      //     {
+      //       text: "Add Site",
+      //       path: "/seo-manager/add-sites",
+      //       icon: <AddIcon />,
+      //     },
+      //     {
+      //       text: "Static Page",
+      //       path: "/seo-manager/static-pages",
+      //       icon: <ArticleOutlinedIcon />,
+      //     },
+      //     {
+      //       text: "Blog",
+      //       path: "/seo-manager/blog",
+      //       icon: <ArticleOutlinedIcon />,
+      //     },
+      //   ],
+      // },
       // {
       //   text: "College Approval",
       //   icon: <VerifiedUserIcon />,
@@ -294,22 +294,22 @@ export default function MiniDrawer() {
       //     },
       //   ],
       // },
-      {
-        text: "Blog Approval",
-        icon: <FactCheckIcon />,
-        subItems: [
-          {
-            text: "Blog List",
-            path: "/blog-approval/blog-approve-list",
-            icon: <BookIcon />,
-          },
-          {
-            text: "Approved Blog",
-            path: "/blog-approval/approved-blog-list",
-            icon: <LibraryBooksIcon />,
-          },
-        ],
-      },
+      // {
+      //   text: "Blog Approval",
+      //   icon: <FactCheckIcon />,
+      //   subItems: [
+      //     {
+      //       text: "Blog List",
+      //       path: "/blog-approval/blog-approve-list",
+      //       icon: <BookIcon />,
+      //     },
+      //     {
+      //       text: "Approved Blog",
+      //       path: "/blog-approval/approved-blog-list",
+      //       icon: <LibraryBooksIcon />,
+      //     },
+      //   ],
+      // },
     ].filter((item) => {
       for (let role of userRoles) {
         switch (role) {
@@ -408,14 +408,14 @@ export default function MiniDrawer() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: isMobileScreen ? 20 : isSmallScreen ? 50 : 75,
-              height: isMobileScreen ? 20 : isSmallScreen ? 40 : 65,
+              width: isMobileScreen ? 60 : isSmallScreen ? 75 : 95,
+              height: isMobileScreen ? 60 : isSmallScreen ? 70 : 90,
             }}
           >
             <img
               src={Logo}
               alt="logo"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </Grid>
         </Grid>
