@@ -67,7 +67,7 @@ const Header = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { totalItems } = useCart();
+  const { totalItems, setCartOpen } = useCart();
   const { user } = useUser();
 
 
@@ -203,7 +203,7 @@ const Header = () => {
                   </Box>
                 </ClickAwayListener>
               </Box>
-              <IconButton color="inherit" onClick={() => navigate('/cart')}>
+              <IconButton color="inherit" onClick={() => setCartOpen(true)}>
                 <Badge badgeContent={totalItems} color="secondary">
                   <CartIcon sx={{ fontSize: 30 }} />
                 </Badge>

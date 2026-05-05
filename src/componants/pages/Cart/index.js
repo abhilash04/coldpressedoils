@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { useCart } from '../../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { config } from '../../../config/config';
 
 // Assets
 import groundnutImg from '../../../assets/ArtBoard-img-3.jpg';
@@ -38,9 +39,12 @@ const assetMap = {
 };
 
 const CartPage = () => {
-  const getMappedImage = (img) => {
-    if (assetMap[img]) return assetMap[img];
-    return img; // Return the image directly if it's already a solved asset
+  const getImageSrc = (image) => {
+    if (!image) return "";
+    if (image.startsWith('http') || image.startsWith('data:')) return image;
+    if (assetMap[image]) return assetMap[image];
+    if (image.startsWith('/')) return `${config.apiUrl}${image}`;
+    return `${config.apiUrl}/uploads/products/${image}`;
   };
   const { cartItems, updateQuantity, removeFromCart, subtotal } = useCart();
   const navigate = useNavigate();
@@ -90,7 +94,7 @@ const CartPage = () => {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Box
                       component="img"
-                      src={getMappedImage(item.image)}
+                      src={getImageSrc(item.image)}
                       sx={{ width: 80, height: 80, backgroundColor: '#F5F5F5', objectFit: 'contain', mixBlendMode: 'multiply' }}
                     />
                     <Box>

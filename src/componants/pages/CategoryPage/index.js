@@ -2,8 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Container, Typography, Grid, Skeleton, Breadcrumbs, Link } from '@mui/material';
 import ProductCard from '../../common/ProductCard';
-import { config } from '../../../config/config';
-import axios from 'axios';
+import { invokeGetApi, apiList } from '../../../services/apiServices';
+import coldPressedOilsImg from '../../../assets/images/cold_pressed_oils.png';
+import floursImg from '../../../assets/images/gluten_free_flours.png';
+
+// Map URL category slug → database category_id
+const CATEGORY_ID_MAP = {
+  'cold-pressed-oils': 1,
+  'spices-powders': 2,
+  'jaggery-sweeteners': 3,
+  'gluten-free-flours': 4,
+  'rock-salt': 5,
+};
 
 const CategoryPage = () => {
   const { category } = useParams();
@@ -14,30 +24,39 @@ const CategoryPage = () => {
     'cold-pressed-oils': {
       title: 'Cold Pressed Oils',
       description: 'Experience the pure essence of nature with our tradition-pressed oils. Extracted slowly in wooden Ghanis to preserve nutrients, antioxidants, and original flavor.',
-      image: '/assets/images/hero_banner.png'
+      image: coldPressedOilsImg
     },
     'flours': {
       title: 'Healthy Flours & Grains',
       description: 'Nutrient-rich, gluten-free flours milled with care to retain fiber and vitamins. Perfect for health-conscious baking and cooking.',
-      image: '/assets/images/groundnut_oil.png'
+      image: floursImg
+    },
+    'spices-powders': {
+      title: 'Spices & Powders',
+      description: 'Premium quality authentic spices and powders sourced directly from nature.',
+      image: coldPressedOilsImg
     }
-    // Add others as needed
   };
 
   const details = categoryDetails[category] || { 
-    title: category ? category.replace('-', ' ').toUpperCase() : 'Products', 
+    title: category ? category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Products', 
     description: 'Explore our range of natural and pure health products.',
-    image: '/assets/images/hero_banner.png'
+    image: coldPressedOilsImg
   };
 
   useEffect(() => {
     const fetchCategoryProducts = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${config.apiUrl}/products`, {
-          params: { category }
-        });
-        setProducts(response.data);
+        const response = await invokeGetApi(apiList.getAllProducts);
+        const allProducts = response?.data?.products || response?.data || [];
+        const categoryId = CATEGORY_ID_MAP[category];
+        
+        const filtered = categoryId
+          ? allProducts.filter(p => Number(p.category_id) === categoryId)
+          : allProducts;
+        
+        setProducts(filtered);
       } catch (error) {
         console.error("Error fetching category products:", error);
       } finally {
@@ -73,7 +92,7 @@ const CategoryPage = () => {
         </Container>
       </Box>
 
-      <Container maxWidth="lg" sx={{ mb: 10 }}>
+      <Container maxWidth="xl" sx={{ mb: 10 }}>
         <Breadcrumbs sx={{ mb: 4 }}>
           <Link underline="hover" color="inherit" href="/">Home</Link>
           <Link underline="hover" color="inherit" href="/shop">Shop</Link>

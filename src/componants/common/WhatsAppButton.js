@@ -3,7 +3,7 @@ import { Box, Fab, Tooltip, Typography, Paper, IconButton } from '@mui/material'
 import { WhatsApp, Close } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const WHATSAPP_NUMBER = '919XXXXXXXXX'; // Amrutha Dharee number
+const WHATSAPP_NUMBER = '919972280728'; // Raj Rajeshwari Enterprises
 
 const quickMessages = [
   { label: '🛒 Place an Order', msg: 'Hi! I want to place an order for your Cold Pressed Oils.' },

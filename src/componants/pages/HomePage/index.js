@@ -3,10 +3,9 @@ import Box from '@mui/material/Box';
 import Hero from './components/Hero';
 import TrustBadges from './components/TrustBadges';
 import TrustBar from '../../common/TrustBar';
-import FeaturedProducts from './components/FeaturedProducts';
+import ProductCarouselSection from './components/ProductCarouselSection';
 import CategoryShowcase from './components/CategoryShowcase';
 import WhyChooseUs from './components/WhyChooseUs';
-import HowItWorks from './components/HowItWorks';
 import ProcessWalkthrough from './components/ProcessWalkthrough';
 import Testimonials from './components/Testimonials';
 import HealthEducation from './components/HealthEducation';
@@ -31,27 +30,39 @@ const HomePage = () => {
       <motion.div {...fadeInUp}>
         <TrustBadges />
       </motion.div>
+      
       <motion.div {...fadeInUp}>
-        <FeaturedProducts />
+        <ProductCarouselSection title="Our Best Sellers" />
       </motion.div>
+
       <motion.div {...fadeInUp}>
         <TrustBar />
       </motion.div>
+
+      <motion.div {...fadeInUp}>
+        <ProductCarouselSection title="Pure Cold Pressed Oils" categoryId={1} bgColor="#F9FAF4" viewAllLink="/shop/cold-pressed-oils" />
+      </motion.div>
+
+      <motion.div {...fadeInUp}>
+        <ProductCarouselSection title="Spices & Powders" categoryId={2} viewAllLink="/shop/spices-powders" />
+      </motion.div>
+
       <motion.div {...fadeInUp}>
         <WhyChooseUs />
       </motion.div>
-      <motion.div {...fadeInUp}>
-        <HowItWorks />
-      </motion.div>
+
       <motion.div {...fadeInUp}>
         <ProcessWalkthrough />
       </motion.div>
+
       <motion.div {...fadeInUp}>
         <CategoryShowcase />
       </motion.div>
+
       <motion.div {...fadeInUp}>
         <HealthEducation />
       </motion.div>
+
       <motion.div {...fadeInUp}>
         <Testimonials />
       </motion.div>

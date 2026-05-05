@@ -257,260 +257,25 @@ const ProductCard = ({ onCartUpdate }) => {
               const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
               const quantity = cartItem ? cartItem.quantity : 0;
 
-              return (
-                <Box
-                  key={idx}
-                  sx={{
-                    borderRadius: "10px",
-                    position: "relative",
-                    overflow: "visible",
-                    border: "1px solid #d1d1d1",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    minWidth: 250,
-                    backgroundColor: "#fff",
-                  }}
-                  onClick={() => navigate(`/products/${item.ogUrl}`)}
-                >
-                  <Box sx={{ position: "absolute", top: 0, left: 16 }}>
-                    <Chip
-                      label="New Launch"
-                      sx={{
-                        backgroundColor: "#1d639f",
-                        color: "white",
-                        fontWeight: 600,
-                        borderRadius: "0 0 10px 0",
-                        fontSize: 12,
-                        fontFamily: "var(--font-heading-family)",
-                      }}
-                    />
-                  </Box>
-                  <Box sx={{ position: "absolute", top: 0, right: 16 }}>
-                    <Chip
-                      label={`${Math.round(((item.scratchPrice - item.price) * 100) / item.scratchPrice)}% Off`}
-                      sx={{
-                        backgroundColor: "#00584b",
-                        color: "white",
-                        fontWeight: 600,
-                        borderRadius: "0 0 0 10px",
-                        fontSize: 12,
-                        fontFamily: "var(--font-heading-family)",
-                      }}
-                    />
-                  </Box>
+              const getImageSource = (item) => {
+                if (item.featuredImage && item.featuredImage.startsWith('/uploads')) {
+                  return `${config.apiUrl}${item.featuredImage}`;
+                }
+                return item.featuredImage;
+              };
 
-                  <CardMedia
-                    component="img"
-                    image={item.featuredImage}
-                    alt={item.productImage}
-                    sx={{
-                      objectFit: "contain",
-                      width: "100%",
-                      borderTopLeftRadius: '10px',
-                      borderTopRightRadius: '10px',
-                    }}
-                  />
-
-                  <CardContent sx={{ px: 2, py: 1 }}>
-                    <Typography
-                      color="text.secondary"
-                      sx={{
-                        fontFamily: "var(--font-heading-family)",
-                        fontSize: "14px",
-                      }}
-                    >
-                      {item.category}
-                    </Typography>
-                    <Typography
-                      fontWeight="bold"
-                      sx={{
-                        my: 0.4,
-                        fontFamily: "var(--font-heading-family)",
-                        fontSize: "18px",
-                      }}
-                    >
-                      {item.productName}
-                    </Typography>
-                    <Typography
-                      color="text.secondary"
-                      sx={{
-                        mb: 0.8,
-                        fontFamily: "var(--font-heading-family)",
-                        fontSize: "16px",
-                      }}
-                    >
-                      {item.subCategory}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        spacing={1}
-                        sx={{ mb: 0.6 }}
-                      >
-                        <Rating
-                          value={4.5}
-                          precision={0.5}
-                          readOnly
-                          size="small"
-                        />
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ fontFamily: "var(--font-heading-family)" }}
-                        >
-                          1088 reviews
-                        </Typography>
-                      </Stack>
-
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <Typography
-                          variant="h6"
-                          fontWeight="bold"
-                          sx={{ fontFamily: "var(--font-heading-family)" }}
-                        >
-                          ₹{item.price}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            textDecoration: "line-through",
-                            color: "gray",
-                            fontFamily: "var(--font-heading-family)",
-                          }}
-                        >
-                          ₹{item.scratchPrice}
-                        </Typography>
-                      </Stack>
-                    </Box>
-
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: "#00715D",
-                        fontWeight: 600,
-                        fontFamily: "var(--font-heading-family)",
-                      }}
-                    >
-                      Best Price ₹{item.price}{" "}
-                      <Typography
-                        component="span"
-                        color="text.secondary"
-                        sx={{ fontFamily: "var(--font-heading-family)" }}
-                      >
-                        with coupon
-                      </Typography>
-                    </Typography>
-                  </CardContent>
-
-                  <Stack
-                    spacing={1.5}
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="center"
-                    sx={{ width: "100%", mb: 1 }}
-                  >
-                    {quantity > 0 ? (
-                      <Paper
-                        variant="outlined"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: 'center',
-                          borderRadius: 50,
-                          overflow: "hidden",
-                          // minWidth: 120,
-                          px: 1,
-                          borderColor: "#00715D",
-                        }}
-                      >
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveFromCart(item.id);
-                          }}
-                          sx={{ color: "#00715D" }}
-                        >
-                          <RemoveIcon fontSize="small" />
-                        </IconButton>
-                        <Typography sx={{ px: 1, fontWeight: 600 }}>{quantity}</Typography>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddToCart(item);
-                          }}
-                          sx={{ color: "#00715D" }}
-                        >
-                          <AddIcon fontSize="small" />
-                        </IconButton>
-                      </Paper>
-                    ) : (
-                      <Button
-                        variant="contained"
-                        startIcon={<ShoppingCartIcon fontSize="small" />}
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(item);
-                        }}
-                        sx={{
-                          px: 2,
-                          py: 0.5,
-                          minWidth: 120,
-                          backgroundColor: "#00715D",
-                          color: "#fff",
-                          borderRadius: 50,
-                          fontFamily: "var(--font-heading-family)",
-                          textTransform: "none",
-                          fontWeight: 600,
-                          fontSize: "0.75rem",
-                          "&:hover": { backgroundColor: "#005f4f" },
-                        }}
-                      >
-                        Add to cart
-                      </Button>
-                    )}
-
-                    <Button
-                      variant="outlined"
-                      startIcon={<FlashOnIcon fontSize="small" />}
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleBuyProduct(item);
-                      }}
-                      sx={{
-                        px: 2,
-                        py: 0.5,
-                        minWidth: 100,
-                        borderColor: "#00715D",
-                        color: "#00715D",
-                        fontFamily: "var(--font-heading-family)",
-                        borderRadius: 50,
-                        textTransform: "none",
-                        fontWeight: 600,
-                        fontSize: "0.75rem",
-                        "&:hover": {
-                          borderColor: "#005f4f",
-                          backgroundColor: "#f4f4f4",
-                        },
-                      }}
-                    >
-                      Buy Now
-                    </Button>
-                  </Stack>
-
-                </Box>
-              );
+              // Local state for variant selection per card
+              // We'll use a nested component or handle it inside the map
+              return <ProductCardItem 
+                        key={idx} 
+                        item={item} 
+                        cartItems={cartItems} 
+                        handleAddToCart={handleAddToCart}
+                        handleRemoveFromCart={handleRemoveFromCart}
+                        handleBuyProduct={handleBuyProduct}
+                        getImageSource={getImageSource}
+                        navigate={navigate}
+                      />;
             })}
           </Box>
         </Box>
@@ -523,6 +288,135 @@ const ProductCard = ({ onCartUpdate }) => {
         onCloseCheckout={() => setOpenCheckout(false)}
       />
     </>
+  );
+};
+
+// Internal component to manage individual product state
+const ProductCardItem = ({ item, cartItems, handleAddToCart, handleRemoveFromCart, handleBuyProduct, getImageSource, navigate }) => {
+  const parsedVariants = typeof item.variants === 'string' ? JSON.parse(item.variants || '[]') : (item.variants || []);
+  const [selectedVariant, setSelectedVariant] = useState(parsedVariants[0] || null);
+  
+  const currentPrice = selectedVariant ? selectedVariant.price : item.price;
+  const currentStock = selectedVariant ? selectedVariant.stock : item.quantity;
+  const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
+  const quantity = cartItem ? cartItem.quantity : 0;
+
+  return (
+    <Box
+      sx={{
+        borderRadius: "10px",
+        position: "relative",
+        overflow: "visible",
+        border: "1px solid #d1d1d1",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minWidth: 250,
+        backgroundColor: "#fff",
+      }}
+      onClick={() => navigate(`/product/${item.ogUrl}`)}
+    >
+      <Box sx={{ position: "absolute", top: 0, left: 16 }}>
+        {currentStock == 0 ? (
+          <Chip label="Out of Stock" sx={{ bgcolor: "#C62828", color: "white", fontWeight: 600, borderRadius: "0 0 10px 0", fontSize: 12 }} />
+        ) : currentStock <= 10 ? (
+          <Chip label={`Only ${currentStock} left`} sx={{ bgcolor: "#F57F17", color: "white", fontWeight: 600, borderRadius: "0 0 10px 0", fontSize: 12 }} />
+        ) : (
+          <Chip label="In Stock" sx={{ bgcolor: "#2E7D32", color: "white", fontWeight: 600, borderRadius: "0 0 10px 0", fontSize: 12 }} />
+        )}
+      </Box>
+      <Box sx={{ position: "absolute", top: 0, right: 16 }}>
+        <Chip
+          label={`${Math.round(((item.scratchPrice - currentPrice) * 100) / item.scratchPrice)}% Off`}
+          sx={{
+            backgroundColor: "#00584b",
+            color: "white",
+            fontWeight: 600,
+            borderRadius: "0 0 0 10px",
+            fontSize: 12,
+            fontFamily: "var(--font-heading-family)",
+          }}
+        />
+      </Box>
+
+      <CardMedia
+        component="img"
+        image={getImageSource(item)}
+        alt={item.productName}
+        sx={{
+          objectFit: "contain",
+          width: "100%",
+          borderTopLeftRadius: '10px',
+          borderTopRightRadius: '10px',
+        }}
+      />
+
+      <CardContent sx={{ px: 2, py: 1 }}>
+        <Typography color="text.secondary" sx={{ fontSize: "14px" }}>{item.category}</Typography>
+        <Typography fontWeight="bold" sx={{ my: 0.4, fontSize: "18px" }}>{item.productName}</Typography>
+        
+        {/* Variant Selector */}
+        {parsedVariants.length > 0 && (
+          <Stack direction="row" spacing={1} sx={{ my: 1, flexWrap: 'wrap', gap: 1 }}>
+            {parsedVariants.map((v, i) => (
+              <Chip
+                key={i}
+                label={v.size}
+                size="small"
+                onClick={(e) => { e.stopPropagation(); setSelectedVariant(v); }}
+                sx={{
+                  cursor: "pointer",
+                  bgcolor: selectedVariant?.size === v.size ? "#00584b" : "#f0f0f0",
+                  color: selectedVariant?.size === v.size ? "white" : "black",
+                  borderRadius: 1,
+                  fontSize: '11px'
+                }}
+              />
+            ))}
+          </Stack>
+        )}
+
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 0.6 }}>
+            <Rating value={4.5} precision={0.5} readOnly size="small" />
+            <Typography variant="body2" color="text.secondary">1088 reviews</Typography>
+          </Stack>
+
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="h6" fontWeight="bold">₹{currentPrice}</Typography>
+            {item.scratchPrice > currentPrice && (
+              <Typography variant="body2" sx={{ textDecoration: "line-through", color: "gray" }}>₹{item.scratchPrice}</Typography>
+            )}
+          </Stack>
+        </Box>
+      </CardContent>
+
+      <Stack spacing={1.5} direction="row" alignItems="center" justifyContent="center" sx={{ width: "100%", mb: 2 }}>
+        {quantity > 0 ? (
+          <Paper variant="outlined" sx={{ display: "flex", alignItems: "center", borderRadius: 50, px: 1, borderColor: "#00715D" }}>
+            <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleRemoveFromCart(item.id); }}><RemoveIcon fontSize="small" /></IconButton>
+            <Typography sx={{ px: 1, fontWeight: 600 }}>{quantity}</Typography>
+            <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleAddToCart(item); }}><AddIcon fontSize="small" /></IconButton>
+          </Paper>
+        ) : (
+          <Button
+            variant="contained"
+            disabled={currentStock == 0}
+            onClick={(e) => { e.stopPropagation(); handleAddToCart({...item, price: currentPrice, selectedSize: selectedVariant?.size}); }}
+            sx={{ px: 2, bgcolor: "#00715D", borderRadius: 50, textTransform: "none", fontWeight: 600 }}
+          >
+            {currentStock == 0 ? "Out of Stock" : "Add to cart"}
+          </Button>
+        )}
+        <Button
+          variant="outlined"
+          onClick={(e) => { e.stopPropagation(); handleBuyProduct({...item, price: currentPrice, selectedSize: selectedVariant?.size}); }}
+          sx={{ px: 2, borderColor: "#00715D", color: "#00715D", borderRadius: 50, textTransform: "none", fontWeight: 600 }}
+        >
+          Buy Now
+        </Button>
+      </Stack>
+    </Box>
   );
 };
 
