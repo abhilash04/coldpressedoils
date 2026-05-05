@@ -10,6 +10,7 @@ import {
   MenuItem,
   Snackbar,
   Alert,
+  Chip,
 } from "@mui/material";
 import { Save as SaveIcon, ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import Sidenav from "../../common/Sidenav";
@@ -33,9 +34,13 @@ const AddProduct = () => {
     category_id: 1,
     description: "",
     rating: "",
-    is_featured: 0,
-    status: "active"
+    quantity: "",
+    reviews: "",
+    weight: "",
+    variants: []
   });
+
+  const [variantInput, setVariantInput] = useState({ size: "", price: "", stock: "" });
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -43,6 +48,25 @@ const AddProduct = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddVariant = () => {
+    if (!variantInput.size || !variantInput.price) {
+      setSnackbar({ open: true, message: "Please enter size and price", severity: "warning" });
+      return;
+    }
+    setFormData(prev => ({
+      ...prev,
+      variants: [...prev.variants, variantInput]
+    }));
+    setVariantInput({ size: "", price: "", stock: "" });
+  };
+
+  const handleRemoveVariant = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      variants: prev.variants.filter((_, i) => i !== index)
+    }));
   };
 
   const handleFileChange = (e) => {
@@ -59,7 +83,11 @@ const AddProduct = () => {
     try {
       const data = new FormData();
       Object.keys(formData).forEach(key => {
-        data.append(key, formData[key]);
+        if (key === 'variants') {
+          data.append(key, JSON.stringify(formData[key]));
+        } else {
+          data.append(key, formData[key]);
+        }
       });
       if (selectedFile) {
         data.append("image_file", selectedFile);
@@ -112,24 +140,15 @@ const AddProduct = () => {
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <TextField fullWidth select label="Category" name="category_id" value={formData.category_id} onChange={handleChange} variant="outlined">
-                    <MenuItem value={1}>Oils</MenuItem>
-                    <MenuItem value={2}>Ghee</MenuItem>
+                    <MenuItem value={1}>Oil Products</MenuItem>
+                    <MenuItem value={2}>Spices Powders</MenuItem>
+                    <MenuItem value={4}>Gluten Free Flours</MenuItem>
+                    <MenuItem value={3}>Jaggery & Sweeteners</MenuItem>
+                    <MenuItem value={5}>Rock Salt</MenuItem>
                   </TextField>
                 </Grid>
                 <Grid item xs={12}>
                   <TextField fullWidth multiline rows={4} label="Product Description" name="description" value={formData.description} onChange={handleChange} required variant="outlined" />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField fullWidth select label="Featured Product" name="is_featured" value={formData.is_featured} onChange={handleChange} variant="outlined">
-                    <MenuItem value={1}>Yes (Show on Homepage)</MenuItem>
-                    <MenuItem value={0}>No</MenuItem>
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField fullWidth select label="Status" name="status" value={formData.status} onChange={handleChange} variant="outlined">
-                    <MenuItem value="active">Active</MenuItem>
-                    <MenuItem value="inactive">Inactive</MenuItem>
-                  </TextField>
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <TextField
@@ -143,6 +162,73 @@ const AddProduct = () => {
                     variant="outlined"
                   />
                 </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Stock Quantity"
+                    name="quantity"
+                    type="number"
+                    value={formData.quantity}
+                    onChange={handleChange}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Number of Reviews"
+                    name="reviews"
+                    type="number"
+                    value={formData.reviews}
+                    onChange={handleChange}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={12}>
+                  <TextField
+                    fullWidth
+                    label="Default Weight (e.g. 1 Liter or 500g)"
+                    name="weight"
+                    value={formData.weight}
+                    onChange={handleChange}
+                    variant="outlined"
+                  />
+                </Grid>
+                {/* Variants Section */}
+                <Grid item xs={12}>
+                  <Typography variant="h6" sx={{ color: "#2D6A4F", mb: 2, fontWeight: 600 }}>Product Variants (Sizes & Prices)</Typography>
+                  <Box sx={{ p: 2, bgcolor: "#f1f3f0", mb: 2 }}>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item xs={12} md={4}>
+                        <TextField fullWidth label="Size (e.g. 1 Liter or 500g)" value={variantInput.size} onChange={(e) => setVariantInput({...variantInput, size: e.target.value})} />
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <TextField fullWidth label="Price (₹)" type="number" value={variantInput.price} onChange={(e) => setVariantInput({...variantInput, price: e.target.value})} />
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <TextField fullWidth label="Stock" type="number" value={variantInput.stock} onChange={(e) => setVariantInput({...variantInput, stock: e.target.value})} />
+                      </Grid>
+                      <Grid item xs={12} md={2}>
+                        <Button fullWidth variant="contained" onClick={handleAddVariant} sx={{ bgcolor: "#2D6A4F" }}>Add</Button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+
+                  {formData.variants.length > 0 && (
+                    <Box sx={{ mt: 2 }}>
+                      {formData.variants.map((v, i) => (
+                        <Chip 
+                          key={i} 
+                          label={`${v.size} - ₹${v.price} (${v.stock} in stock)`} 
+                          onDelete={() => handleRemoveVariant(i)}
+                          sx={{ m: 0.5, bgcolor: "#E8F5E9", color: "#2D6A4F", fontWeight: 600 }}
+                        />
+                      ))}
+                    </Box>
+                  )}
+                  <Typography variant="caption" color="textSecondary">* The first variant added will be the default price shown on the grid.</Typography>
+                </Grid>
+
                 {/* Image Upload Section */}
                 <Grid item xs={12}>
                   <Box sx={{ mb: 3, p: 2, border: '2px dashed #ccc', textAlign: 'center' }}>

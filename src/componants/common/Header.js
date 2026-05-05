@@ -67,7 +67,7 @@ const Header = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { totalItems } = useCart();
+  const { totalItems, setCartOpen } = useCart();
   const { user } = useUser();
 
 
@@ -107,7 +107,7 @@ const Header = () => {
     { label: 'Home', path: '/', icon: <HomeIcon fontSize="small" /> },
     { label: 'Our Oils', path: '/our-oils', icon: <OilIcon fontSize="small" /> },
     { label: 'Shop', path: '/shop', icon: <ShopIcon fontSize="small" /> },
-    { label: 'Blog', path: '/blog', icon: <BlogIcon fontSize="small" /> },
+    // { label: 'Blog', path: '/blog', icon: <BlogIcon fontSize="small" /> },
     { label: 'Contact', path: '/contact', icon: <ContactIcon fontSize="small" /> },
   ];
 
@@ -166,7 +166,7 @@ const Header = () => {
               </IconButton>
 
               <Box component={Link} to="/" sx={{ display: 'flex', alignItems: 'center', py: isMobile ? 1 : 1 }}>
-                <Box component="img" src={logo} alt="Amrutha Dharee" sx={{ height: isMobile ? "45px" : "75px", width: "auto" }} />
+                <Box component="img" src={logo} alt="Amrutha Dharee" sx={{ height: isMobile ? "55px" : "90px", width: "auto" }} />
               </Box>
             </Box>
 
@@ -203,7 +203,7 @@ const Header = () => {
                   </Box>
                 </ClickAwayListener>
               </Box>
-              <IconButton color="inherit" onClick={() => navigate('/cart')}>
+              <IconButton color="inherit" onClick={() => setCartOpen(true)}>
                 <Badge badgeContent={totalItems} color="secondary">
                   <CartIcon sx={{ fontSize: 30 }} />
                 </Badge>

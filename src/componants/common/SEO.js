@@ -135,7 +135,7 @@ const SEO = ({
       name: SITE_NAME,
       url: BASE_URL,
       logo: `${BASE_URL}/logo.png`,
-      contactPoint: { '@type': 'ContactPoint', telephone: '+91-9XXXXXXXXX', contactType: 'Customer Service' },
+      contactPoint: { '@type': 'ContactPoint', telephone: '+91-9972280728', contactType: 'Customer Service' },
     });
     document.head.appendChild(orgSchema);
 

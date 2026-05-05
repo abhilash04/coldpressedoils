@@ -26,6 +26,7 @@ const ProductList = () => {
   const [previewUrl, setPreviewUrl]     = useState("");
   const [saving, setSaving]       = useState(false);
   const [snackbar, setSnackbar]   = useState({ open: false, message: "", severity: "success" });
+  const [variantInput, setVariantInput] = useState({ size: "", price: "", stock: "" });
 
   useEffect(() => { fetchProducts(); }, []);
 
@@ -47,10 +48,28 @@ const ProductList = () => {
 
   // ── Open Edit Dialog ────────────────────────────────────────────────
   const handleEditOpen = (product) => {
-    setEditProduct({ ...product });
+    // Parse variants if they come as a string
+    const parsedVariants = typeof product.variants === 'string' ? JSON.parse(product.variants || '[]') : (product.variants || []);
+    setEditProduct({ ...product, variants: parsedVariants });
     setSelectedFile(null);
     setPreviewUrl("");
     setEditOpen(true);
+  };
+
+  const handleAddVariant = () => {
+    if (!variantInput.size || !variantInput.price) return;
+    setEditProduct(prev => ({
+      ...prev,
+      variants: [...(prev.variants || []), variantInput]
+    }));
+    setVariantInput({ size: "", price: "", stock: "" });
+  };
+
+  const handleRemoveVariant = (index) => {
+    setEditProduct(prev => ({
+      ...prev,
+      variants: prev.variants.filter((_, i) => i !== index)
+    }));
   };
 
   const handleFileChange = (e) => {
@@ -68,7 +87,11 @@ const ProductList = () => {
       const formData = new FormData();
       Object.keys(editProduct).forEach(key => {
         if (editProduct[key] !== null && editProduct[key] !== undefined) {
-          formData.append(key, editProduct[key]);
+          if (key === 'variants') {
+            formData.append(key, JSON.stringify(editProduct[key]));
+          } else {
+            formData.append(key, editProduct[key]);
+          }
         }
       });
       if (selectedFile) formData.append("image_file", selectedFile);
@@ -142,6 +165,7 @@ const ProductList = () => {
                     <TableCell sx={{ fontWeight: 700 }}>CATEGORY</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>PRICE</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>STATUS</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>QTY</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>RATING</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 700 }}>ACTIONS</TableCell>
                   </TableRow>
@@ -177,14 +201,19 @@ const ProductList = () => {
                         <TableCell>₹{row.price}</TableCell>
                         <TableCell>
                           <Chip
-                            label={row.status?.toUpperCase() || "ACTIVE"}
+                            label={row.quantity > 0 ? "ACTIVE" : "INACTIVE"}
                             size="small"
                             sx={{
-                              bgcolor: row.status === "active" ? "#E8F5E9" : "#FFF3E0",
-                              color: row.status === "active" ? "#2E7D32" : "#E65100",
+                              bgcolor: row.quantity > 0 ? "#E8F5E9" : "#FFEBEE",
+                              color: row.quantity > 0 ? "#2E7D32" : "#C62828",
                               fontWeight: 700, borderRadius: 0,
                             }}
                           />
+                        </TableCell>
+                        <TableCell>
+                          <Typography sx={{ fontWeight: 600, color: row.quantity === 0 ? "#C62828" : "inherit" }}>
+                            {row.quantity ?? 0}
+                          </Typography>
                         </TableCell>
                         <TableCell>{row.rating ?? "—"} ⭐</TableCell>
                         <TableCell align="right">
@@ -239,6 +268,21 @@ const ProductList = () => {
                 <TextField fullWidth label="Slug" value={editProduct.slug || ""}
                   onChange={(e) => setEditProduct({ ...editProduct, slug: e.target.value })} />
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Category"
+                  value={editProduct.category_id || ""}
+                  onChange={(e) => setEditProduct({ ...editProduct, category_id: e.target.value })}
+                >
+                  <MenuItem value={1}>Oil Products</MenuItem>
+                  <MenuItem value={2}>Spices Powders</MenuItem>
+                  <MenuItem value={4}>Gluten Free Flours</MenuItem>
+                  <MenuItem value={3}>Jaggery & Sweeteners</MenuItem>
+                  <MenuItem value={5}>Rock Salt</MenuItem>
+                </TextField>
+              </Grid>
               <Grid item xs={6}>
                 <TextField fullWidth label="Sale Price (₹)" type="number" value={editProduct.price || ""}
                   onChange={(e) => setEditProduct({ ...editProduct, price: e.target.value })} />
@@ -247,29 +291,62 @@ const ProductList = () => {
                 <TextField fullWidth label="Original Price (₹)" type="number" value={editProduct.oldPrice || ""}
                   onChange={(e) => setEditProduct({ ...editProduct, oldPrice: e.target.value })} />
               </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField fullWidth select label="Status" value={editProduct.status || "active"}
-                  onChange={(e) => setEditProduct({ ...editProduct, status: e.target.value })}>
-                  <MenuItem value="active">Active</MenuItem>
-                  <MenuItem value="inactive">Inactive</MenuItem>
-                </TextField>
+              <Grid item xs={12} md={12}>
+                <TextField fullWidth label="Weight (e.g. 1L or 500g)" value={editProduct.weight || ""}
+                  onChange={(e) => setEditProduct({ ...editProduct, weight: e.target.value })} />
               </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField fullWidth select label="Featured" value={editProduct.is_featured ?? 0}
-                  onChange={(e) => setEditProduct({ ...editProduct, is_featured: e.target.value })}>
-                  <MenuItem value={1}>Yes</MenuItem>
-                  <MenuItem value={0}>No</MenuItem>
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Rating (0.0 – 5.0)"
-                  type="number"
+              <Grid item xs={12} md={4}>
+                <TextField fullWidth label="Rating (0-5)" type="number"
                   inputProps={{ step: 0.1, min: 0, max: 5 }}
                   value={editProduct.rating || ""}
                   onChange={(e) => setEditProduct({ ...editProduct, rating: e.target.value })}
                 />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField fullWidth label="Stock Qty" type="number"
+                  value={editProduct.quantity ?? ""}
+                  onChange={(e) => setEditProduct({ ...editProduct, quantity: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField fullWidth label="Reviews Count" type="number"
+                  value={editProduct.reviews ?? ""}
+                  onChange={(e) => setEditProduct({ ...editProduct, reviews: e.target.value })}
+                />
+              </Grid>
+
+              {/* Variants Manager */}
+              <Grid item xs={12}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "#2D6A4F", mb: 1 }}>
+                  Manage Variants (Sizes & Prices)
+                </Typography>
+                <Box sx={{ p: 2, bgcolor: "#f5f5f5", borderRadius: 1 }}>
+                  <Grid container spacing={1} alignItems="center">
+                    <Grid item xs={5}>
+                      <TextField fullWidth size="small" label="Size (1L or 500g)" value={variantInput.size} onChange={(e) => setVariantInput({...variantInput, size: e.target.value})} />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <TextField fullWidth size="small" label="Price" type="number" value={variantInput.price} onChange={(e) => setVariantInput({...variantInput, price: e.target.value})} />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <TextField fullWidth size="small" label="Stock" type="number" value={variantInput.stock} onChange={(e) => setVariantInput({...variantInput, stock: e.target.value})} />
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Button onClick={handleAddVariant} variant="contained" size="small" sx={{ bgcolor: "#2D6A4F", minWidth: 40 }}>+</Button>
+                    </Grid>
+                  </Grid>
+                  <Box sx={{ mt: 1 }}>
+                    {(editProduct.variants || []).map((v, i) => (
+                      <Chip 
+                        key={i} 
+                        label={`${v.size}: ₹${v.price} (${v.stock})`} 
+                        size="small" 
+                        onDelete={() => handleRemoveVariant(i)}
+                        sx={{ m: 0.5, bgcolor: "#E8F5E9" }}
+                      />
+                    ))}
+                  </Box>
+                </Box>
               </Grid>
               <Grid item xs={12}>
                 <TextField fullWidth multiline rows={3} label="Description" value={editProduct.description || ""}

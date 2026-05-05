@@ -58,12 +58,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { config } from "../../config/config";
 import { getUser } from "../../global/redux/action";
 import BuildIcon from "@mui/icons-material/Build";
+import { useDashboard } from "../../context/DashboardContext";
+import MiniDrawer from "./IconSidenav";
 
 const drawerWidth = 240;
 
+
 const Sidebar = () => {
+  const { isSidebarCollapsed } = useDashboard();
   const navigate = useNavigate();
   const location = useLocation();
+
   const [open, setOpen] = useState(true);
   const [openSubList, setOpenSubList] = useState({});
   const isSmallScreen = useMediaQuery(
@@ -265,35 +270,35 @@ const Sidebar = () => {
           },
         ],
       },
-      {
-        text: "Blog",
-        icon: <BlogIcon />,
-        subItems: [
-          { text: "Add Blog", path: "/blog-manager/add-blog", icon: <PlusIcon /> },
-          { text: "Blog List", path: "/blog-manager/blog-list", icon: <ListIcon /> },
-        ],
-      },
-      {
-        text: "SEO",
-        icon: <BlogIcon />,
-        subItems: [
-          {
-            text: "Add Site",
-            path: "/seo-manager/add-sites",
-            icon: <AddIcon />,
-          },
-          {
-            text: "Static Page",
-            path: "/seo-manager/static-pages",
-            icon: <ArticleOutlinedIcon />,
-          },
-          {
-            text: "Blog",
-            path: "/seo-manager/blog",
-            icon: <ArticleOutlinedIcon />,
-          },
-        ],
-      },
+      // {
+      //   text: "Blog",
+      //   icon: <BlogIcon />,
+      //   subItems: [
+      //     { text: "Add Blog", path: "/blog-manager/add-blog", icon: <PlusIcon /> },
+      //     { text: "Blog List", path: "/blog-manager/blog-list", icon: <ListIcon /> },
+      //   ],
+      // },
+      // {
+      //   text: "SEO",
+      //   icon: <BlogIcon />,
+      //   subItems: [
+      //     {
+      //       text: "Add Site",
+      //       path: "/seo-manager/add-sites",
+      //       icon: <AddIcon />,
+      //     },
+      //     {
+      //       text: "Static Page",
+      //       path: "/seo-manager/static-pages",
+      //       icon: <ArticleOutlinedIcon />,
+      //     },
+      //     {
+      //       text: "Blog",
+      //       path: "/seo-manager/blog",
+      //       icon: <ArticleOutlinedIcon />,
+      //     },
+      //   ],
+      // },
       // {
       //   text: "Web Approval",
       //   icon: <VerifiedUserIcon />,
@@ -310,22 +315,22 @@ const Sidebar = () => {
       //     },
       //   ],
       // },
-      {
-        text: "Blog Approval",
-        icon: <FactCheckIcon />,
-        subItems: [
-          {
-            text: "Blog List",
-            path: "/blog-approval/blog-approve-list",
-            icon: <BookIcon />,
-          },
-          {
-            text: "Approved Blog",
-            path: "/blog-approval/approved-blog-list",
-            icon: <LibraryBooksIcon />,
-          },
-        ],
-      },
+      // {
+      //   text: "Blog Approval",
+      //   icon: <FactCheckIcon />,
+      //   subItems: [
+      //     {
+      //       text: "Blog List",
+      //       path: "/blog-approval/blog-approve-list",
+      //       icon: <BookIcon />,
+      //     },
+      //     {
+      //       text: "Approved Blog",
+      //       path: "/blog-approval/approved-blog-list",
+      //       icon: <LibraryBooksIcon />,
+      //     },
+      //   ],
+      // },
     ].filter((item) => {
       for (let role of userRoles) {
         switch (role) {
@@ -398,6 +403,10 @@ const Sidebar = () => {
   const openPopper = Boolean(anchorEl);
   const id = openPopper ? "simple-popover" : undefined;
 
+  if (isSidebarCollapsed) {
+    return <MiniDrawer />;
+  }
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -428,14 +437,14 @@ const Sidebar = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: isSmallScreen ? 50 : 75,
-              height: isSmallScreen ? 40 : 65,
+              width: isSmallScreen ? 120 : 180,
+              height: isSmallScreen ? 100 : 150,
             }}
           >
             <img
               src={Logo}
               alt="logo"
-              style={{ height: "100%", objectFit: "cover" }}
+              style={{ height: "100%", objectFit: "contain" }}
             />
           </Grid>
         </Grid>

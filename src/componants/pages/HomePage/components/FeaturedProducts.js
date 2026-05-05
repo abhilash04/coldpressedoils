@@ -43,14 +43,14 @@ const FeaturedProducts = () => {
     dots: true,
     infinite: products.length > 3,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: 4,
     slidesToScroll: 1,
     arrows: false,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: 3,
           slidesToScroll: 1,
           infinite: products.length > 2,
         }
@@ -58,7 +58,7 @@ const FeaturedProducts = () => {
       {
         breakpoint: 600,
         settings: {
-          slidesToShow: 1,
+          slidesToShow: 2,
           slidesToScroll: 1,
           infinite: products.length > 1,
         }
@@ -118,7 +118,7 @@ const FeaturedProducts = () => {
 
   return (
     <Box sx={{ pt: isMobile ? 4 : 6, pb: isMobile ? 1 : 2, backgroundColor: '#FFF', overflow: 'hidden' }}>
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Box sx={{
           position: 'relative',
           display: 'flex',
@@ -176,10 +176,10 @@ const FeaturedProducts = () => {
         {loading ? (
           <Grid container spacing={isMobile ? 2 : 4}>
             {[1, 2, 3].map((n) => (
-              <Grid item xs={isMobile ? 12 : 4} key={n}>
-                <Skeleton variant="rectangular" height={isMobile ? 150 : 200} />
+              <Grid item xs={isMobile ? 6 : 3} key={n}>
+                <Skeleton variant="rectangular" height={isMobile ? 220 : 350} />
                 <Skeleton variant="text" sx={{ mt: 1 }} />
-                <Skeleton variant="text" width="60%" />
+                <Skeleton variant="text" width="100%" />
               </Grid>
             ))}
           </Grid>
@@ -202,7 +202,7 @@ const FeaturedProducts = () => {
                 },
                 width: 40,
                 height: 40,
-                display: products.length > (isMobile ? 1 : 3) ? 'flex' : 'none'
+                display: products.length > (isMobile ? 2 : 4) ? 'flex' : 'none'
               }}
             >
               <ArrowBackIosNew sx={{ fontSize: '1.2rem' }} />
@@ -210,7 +210,7 @@ const FeaturedProducts = () => {
 
             <Slider ref={sliderRef} {...sliderSettings}>
               {products.map((product) => (
-                <Box key={product.id} sx={{ px: isMobile ? 1 : 2, pb: 1 }}>
+                <Box key={product.id} sx={{ px: 1, pb: 1 }}>
                   <ProductCard product={product} />
                 </Box>
               ))}
@@ -233,7 +233,7 @@ const FeaturedProducts = () => {
                 },
                 width: 40,
                 height: 40,
-                display: products.length > (isMobile ? 1 : 3) ? 'flex' : 'none'
+                display: products.length > (isMobile ? 2 : 4) ? 'flex' : 'none'
               }}
             >
               <ArrowForwardIos sx={{ fontSize: '1.2rem' }} />

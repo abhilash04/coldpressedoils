@@ -43,6 +43,19 @@ export const invokeFormDataApi = async (url, formData, cookies) => {
     }
 };
 
+// Use this for UPDATE (edit) calls that include file uploads — backend expects PUT
+export const invokeFormDataPutApi = async (url, formData) => {
+    try {
+        return await api.put(url, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+    } catch (error) {
+        return error.response || { status: 500, data: { responseMessage: "Network Error" } };
+    }
+};
+
 export const invokeDeleteApi = async (url, params) => {
     try {
         return await api.delete(url, { data: params });

@@ -1,10 +1,12 @@
-import React from 'react';
-import { Card, CardMedia, CardContent, Typography, Button, Box, IconButton, Rating, Chip, useTheme, useMediaQuery } from '@mui/material';
-import { FavoriteBorder, AddShoppingCart } from '@mui/icons-material';
+import React, { useState } from 'react';
+import {
+  Card, CardMedia, CardContent, Typography, Button, Box,
+  IconButton, Rating, Chip, useTheme, useMediaQuery, Select, MenuItem
+} from '@mui/material';
+import { FavoriteBorder, Add, Remove, ShoppingCart } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
 import { config } from '../../config/config';
-
 import { Link } from 'react-router-dom';
 
 // Assets
@@ -17,157 +19,294 @@ import walnutImg from '../../assets/2(2).png';
 import safflowerImg from '../../assets/2(3).png';
 
 const assetMap = {
-  'groundnut': groundnutImg,
-  'ghee': gheeImg,
-  'coconut': coconutImg,
-  'til': sesameImg,
-  'mustard': mustardImg,
-  'walnut': walnutImg,
-  'safflower': safflowerImg,
-  'sunflower': walnutImg // Using this as a placeholder for sunflower
+  groundnut: groundnutImg,
+  ghee: gheeImg,
+  coconut: coconutImg,
+  til: sesameImg,
+  mustard: mustardImg,
+  walnut: walnutImg,
+  safflower: safflowerImg,
+  sunflower: walnutImg,
 };
 
 const ProductCard = ({ product }) => {
-  const { addToCart, setCartOpen } = useCart();
-  const { name, price, oldPrice, rating, reviews, image, badge, weight, slug } = product;
+  const { addToCart, setCartOpen, cartItems } = useCart();
+  const { name, price, oldPrice, rating, reviews, image, featuredImage, badge, weight, slug, ogUrl, variants } = product;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  // Parse variants safely
+  const parsedVariants = (() => {
+    try {
+      if (!variants) return [];
+      return typeof variants === 'string' ? JSON.parse(variants) : variants;
+    } catch { return []; }
+  })();
+  const hasVariants = parsedVariants && parsedVariants.length > 0;
+
+  const [selectedVariant, setSelectedVariant] = useState(hasVariants ? parsedVariants[0] : null);
+  const [quantity, setQuantity] = useState(1);
+
+  const displayPrice = selectedVariant ? selectedVariant.price : price;
+  const displaySize = selectedVariant ? selectedVariant.size : (weight || '1L');
+
+  // Stock: from selected variant or product.quantity field
+  const availableStock = selectedVariant
+    ? Number(selectedVariant.stock ?? 999)
+    : Number(product.quantity ?? 999);
+  const isOutOfStock = availableStock === 0;
+  const isLowStock = !isOutOfStock && availableStock > 0 && availableStock <= 5;
+
+  // Check if this product+size is already in cart
+  const isInCart = cartItems.some(
+    item => item.id === product.id && item.size === displaySize
+  );
+
   const handleAddToCart = (e) => {
     e.preventDefault();
-    addToCart(product, 1, weight || '1L');
+    e.stopPropagation();
+    if (isOutOfStock) return;
+    if (isInCart) {
+      // Already in cart — just open the cart drawer
+      setCartOpen(true);
+      return;
+    }
+    const safeQty = Math.min(quantity, availableStock);
+    addToCart({ ...product, price: displayPrice, size: displaySize, image: featuredImage || image, stock: availableStock }, safeQty, displaySize);
     setCartOpen(true);
   };
 
+  const handleVariantChange = (e) => {
+    e.stopPropagation();
+    const v = parsedVariants.find(v => v.size === e.target.value);
+    setSelectedVariant(v);
+    setQuantity(1); // reset qty when variant changes
+  };
+
+  const incrementQty = (e) => {
+    e.preventDefault(); e.stopPropagation();
+    setQuantity(q => Math.min(q + 1, availableStock || 1));
+  };
+
+  const decrementQty = (e) => {
+    e.preventDefault(); e.stopPropagation();
+    setQuantity(q => Math.max(q - 1, 1));
+  };
+
   const getImageSource = () => {
-    if (assetMap[image]) return assetMap[image];
-    if (typeof image === 'string' && image.startsWith('http')) return image;
-    if (typeof image === 'string' && image.startsWith('/uploads')) return `${config.apiUrl}${image}`;
+    const imgSrc = featuredImage || image;
+    if (!imgSrc) return groundnutImg;
+    if (assetMap[imgSrc]) return assetMap[imgSrc];
+    if (typeof imgSrc === 'string' && imgSrc.startsWith('http')) return imgSrc;
+    if (typeof imgSrc === 'string' && imgSrc.startsWith('/')) return `${config.apiUrl}${imgSrc}`;
     return groundnutImg;
   };
 
-  const productPath = `/product/${slug || 'cold-pressed-groundnut-oil'}`;
+  const productPath = `/product/${slug || ogUrl || 'product'}`;
 
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.3 }}
-      style={{ height: '100%' }}
-    >
-      <Card sx={{ position: 'relative', height: '100%', borderRadius: 0, overflow: 'visible', maxWidth: isMobile ? '280px' : '100%', mx: 'auto' }}>
+    <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.25 }} style={{ height: '100%' }}>
+      <Card sx={{
+        position: 'relative',
+        height: '100%',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        maxWidth: '100%',
+        mx: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        border: '1px solid #EFEFEF',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
+        transition: 'box-shadow 0.25s ease',
+        '&:hover': { boxShadow: '0 8px 28px rgba(0,0,0,0.12)' }
+      }}>
+
+        {/* Badge */}
         {badge && (
-          <Chip
-            label={badge}
-            size="small"
-            sx={{
-              position: 'absolute',
-              top: 10,
-              left: 10,
-              zIndex: 2,
-              backgroundColor: 'secondary.main',
-              color: '#FFF',
-              fontWeight: 700,
-              borderRadius: 0,
-              fontSize: isMobile ? '0.65rem' : '0.75rem',
-              height: isMobile ? '20px' : '24px'
-            }}
-          />
+          <Chip label={badge} size="small" sx={{
+            position: 'absolute', top: 10, left: 10, zIndex: 3,
+            backgroundColor: '#222', color: '#FFF', fontWeight: 700,
+            borderRadius: '4px', fontSize: '0.7rem', height: '22px'
+          }} />
         )}
-        
-        <IconButton
-          sx={{
-            position: 'absolute',
-            top: 10,
-            right: 10,
-            zIndex: 2,
-            backgroundColor: 'rgba(255,255,255,0.8)',
-            '&:hover': { backgroundColor: '#FFF' },
-            padding: isMobile ? '4px' : '8px'
-          }}
-        >
-          <FavoriteBorder fontSize={isMobile ? "inherit" : "small"} />
+
+        {/* Wishlist */}
+        <IconButton sx={{
+          position: 'absolute', top: 8, right: 8, zIndex: 3,
+          backgroundColor: 'rgba(255,255,255,0.88)',
+          '&:hover': { backgroundColor: '#FFF', color: 'error.main' },
+          padding: '5px',
+        }}>
+          <FavoriteBorder sx={{ fontSize: '1.1rem' }} />
         </IconButton>
 
-        <Link to={productPath}>
-          <Box sx={{ p: isMobile ? 1.5 : 2, backgroundColor: '#F5F5F5' }}>
-            <CardMedia
-              component="img"
-              image={getImageSource()}
-              alt={name}
-              sx={{
-                height: isMobile ? 140 : 200,
-                objectFit: 'contain',
-                mixBlendMode: 'multiply',
-              }}
-            />
-          </Box>
+        {/* ── FULL-WIDTH IMAGE (covers entire top, no padding) ── */}
+        <Link to={productPath} style={{ display: 'block', flexShrink: 0 }}>
+          <CardMedia
+            component="img"
+            image={getImageSource()}
+            alt={name}
+            sx={{
+              height: isMobile ? 190 : 240,
+              width: '100%',
+              objectFit: 'cover',
+              display: 'block',
+              backgroundColor: '#F8F8F5',
+            }}
+          />
         </Link>
 
-        <CardContent sx={{ textAlign: 'center', pb: 1, px: isMobile ? 1 : 2 }}>
-          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600, fontSize: isMobile ? '0.65rem' : '0.75rem' }}>
-            {weight}
-          </Typography>
-          <Typography 
-            component={Link} 
-            to={productPath}
-            sx={{ 
-              mt: 0.5, 
-              mb: 1, 
-              height: '2.8em', 
-              overflow: 'hidden', 
-              display: '-webkit-box', 
-              WebkitBoxOrient: 'vertical', 
-              WebkitLineClamp: 2,
-              textDecoration: 'none',
-              color: 'inherit',
-              fontSize: isMobile ? '0.9rem' : '1.1rem',
-              fontWeight: 600,
-              lineHeight: 1.4,
-              '&:hover': { color: 'primary.main' }
-            }}
-          >
-            {name}
-          </Typography>
-          
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 0.5, mb: 1 }}>
-            <Rating value={rating} precision={0.5} size="small" sx={{ fontSize: isMobile ? '0.8rem' : '1rem' }} readOnly />
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: isMobile ? '0.65rem' : '0.75rem' }}>
-              ({reviews || 0})
-            </Typography>
-          </Box>
+        {/* ── CARD CONTENT BELOW IMAGE ── */}
+        <CardContent sx={{
+          px: 1.5, pt: 1.2, pb: 1.5,
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+        }}>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: 1 }}>
-            <Typography color="primary.main" sx={{ fontWeight: 700, fontSize: isMobile ? '1.1rem' : '1.25rem' }}>
-              ₹{price}
-            </Typography>
-            {oldPrice && (
-              <Typography color="text.secondary" sx={{ textDecoration: 'line-through', fontSize: isMobile ? '0.8rem' : '0.9rem' }}>
-                ₹{oldPrice}
-              </Typography>
-            )}
-          </Box>
-        </CardContent>
-
-        <Box sx={{ px: isMobile ? 1.5 : 2, pb: 2 }}>
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<AddShoppingCart sx={{ fontSize: isMobile ? '1rem !important' : 'inherit' }} />}
+          {/* ① SIZE SELECTOR — top of content */}
+          <Select
+            size="small"
+            value={selectedVariant?.size || displaySize}
+            onChange={handleVariantChange}
+            onClick={e => e.stopPropagation()}
+            disabled={!hasVariants}
+            displayEmpty
             sx={{
-              borderColor: 'primary.main',
-              color: 'primary.main',
-              fontSize: isMobile ? '0.75rem' : '0.875rem',
-              py: isMobile ? 0.8 : 1,
-              '&:hover': {
-                backgroundColor: 'primary.main',
-                color: '#FFF',
-              },
+              fontSize: '0.78rem',
+              height: 30,
+              borderRadius: '4px',
+              backgroundColor: '#F5F5F5',
+              '.MuiSelect-select': { py: 0.4, px: 1, color: '#444' },
+              '& fieldset': { borderColor: '#E0E0E0' },
+              '&:hover fieldset': { borderColor: '#BDBDBD' },
             }}
-            onClick={handleAddToCart}
           >
-            Add to Cart
-          </Button>
-        </Box>
+            {hasVariants
+              ? parsedVariants.map((v, idx) => (
+                <MenuItem key={idx} value={v.size} sx={{ fontSize: '0.8rem' }}>
+                  {v.size} — ₹{v.price}
+                  {Number(v.stock) === 0 && <Typography component="span" sx={{ ml: 1, color: '#E53935', fontSize: '0.72rem' }}>(Out of Stock)</Typography>}
+                </MenuItem>
+              ))
+              : <MenuItem value={displaySize} sx={{ fontSize: '0.8rem' }}>{displaySize}</MenuItem>
+            }
+          </Select>
+
+          {/* ② TITLE (left) + PRICE & RATING (right) */}
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+            {/* Title — left */}
+            <Typography
+              component={Link}
+              to={productPath}
+              sx={{
+                flex: 1,
+                overflow: 'hidden',
+                display: '-webkit-box',
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 2,
+                textDecoration: 'none',
+                color: '#111',
+                fontSize: isMobile ? '0.88rem' : '0.95rem',
+                fontWeight: 700,
+                lineHeight: 1.4,
+                '&:hover': { color: 'primary.main' }
+              }}
+            >
+              {name}
+            </Typography>
+
+            {/* Price + Rating — right */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0 }}>
+              <Typography sx={{ color: '#1B813E', fontWeight: 800, fontSize: isMobile ? '1rem' : '1.1rem', lineHeight: 1.2 }}>
+                ₹{displayPrice}
+              </Typography>
+              {oldPrice && !hasVariants && (
+                <Typography sx={{ color: '#999', textDecoration: 'line-through', fontSize: '0.75rem', lineHeight: 1 }}>
+                  ₹{oldPrice}
+                </Typography>
+              )}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3, mt: 0.3 }}>
+                <Rating value={Number(rating) || 5} precision={0.5} size="small"
+                  sx={{ color: '#F59E0B', fontSize: '0.8rem' }} readOnly />
+                <Typography sx={{ fontSize: '0.68rem', color: '#888' }}>({reviews || 0})</Typography>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* ③ LOW STOCK WARNING */}
+          {isLowStock && (
+            <Typography sx={{ fontSize: '0.72rem', color: '#E65100', fontWeight: 600 }}>
+              ⚠ Only {availableStock} left in stock!
+            </Typography>
+          )}
+
+          {/* ③ QUANTITY STEPPER + ADD TO CART */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 'auto' }}>
+            {/* Stepper — hidden when out of stock */}
+            {!isOutOfStock && (
+              <Box sx={{
+                display: 'flex', alignItems: 'center',
+                border: '1px solid #E0E0E0', borderRadius: '4px',
+                height: 34, flexShrink: 0, backgroundColor: '#FAFAFA'
+              }}>
+                <IconButton onClick={decrementQty} sx={{ borderRadius: 0, p: 0, height: 34, width: 28 }}>
+                  <Remove sx={{ fontSize: '0.85rem', color: '#555' }} />
+                </IconButton>
+                <Typography sx={{ minWidth: 26, textAlign: 'center', fontWeight: 600, fontSize: '0.9rem', userSelect: 'none' }}>
+                  {quantity}
+                </Typography>
+                <IconButton onClick={incrementQty} disabled={quantity >= availableStock} sx={{ borderRadius: 0, p: 0, height: 34, width: 28 }}>
+                  <Add sx={{ fontSize: '0.85rem', color: quantity >= availableStock ? '#ccc' : '#555' }} />
+                </IconButton>
+              </Box>
+            )}
+
+            {/* Add to Cart / Go to Cart / Out of Stock */}
+            <Button
+              fullWidth
+              variant="contained"
+              size="small"
+              disabled={isOutOfStock}
+              startIcon={
+                isOutOfStock ? null
+                  : isInCart
+                    ? <ShoppingCart sx={{ fontSize: '0.95rem !important' }} />
+                    : <ShoppingCart sx={{ fontSize: '0.95rem !important' }} />
+              }
+              onClick={handleAddToCart}
+              sx={{
+                backgroundColor: isOutOfStock
+                  ? '#9E9E9E'
+                  : isInCart
+                    ? '#3949AB'   // indigo — already in cart
+                    : '#1B813E',  // green — add to cart
+                color: '#FFF',
+                fontWeight: 600,
+                fontSize: isMobile ? '0.72rem' : '0.78rem',
+                height: 34,
+                borderRadius: '4px',
+                textTransform: 'none',
+                boxShadow: 'none',
+                whiteSpace: 'nowrap',
+                transition: 'background-color 0.25s ease',
+                '&:hover': {
+                  backgroundColor: isOutOfStock
+                    ? '#9E9E9E'
+                    : isInCart
+                      ? '#283593'
+                      : '#146030',
+                  boxShadow: 'none',
+                },
+                '&.Mui-disabled': { backgroundColor: '#9E9E9E', color: '#FFF' },
+              }}
+            >
+              {isOutOfStock ? 'Out of Stock' : isInCart ? 'Go to Cart' : 'Add to Cart'}
+            </Button>
+          </Box>
+
+        </CardContent>
       </Card>
     </motion.div>
   );

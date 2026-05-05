@@ -26,6 +26,7 @@ import HeaderSec from "../common/HeaderSec";
 import Footer from "../common/Footer";
 import bgImage from "../../assets/breadcrumb-bg.webp";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { Link as RouterLink } from "react-router-dom";
 
 const ContactUs = () => {
   useEffect(() => {
@@ -43,44 +44,50 @@ const ContactUs = () => {
   return (
     <>
       <Header />
-      <HeaderSec  cartItems={cartItems} onCartUpdate={(updatedCart)=>setCartItems(updatedCart)}/>
+      <HeaderSec cartItems={cartItems} onCartUpdate={(updatedCart) => setCartItems(updatedCart)} />
       <Box
         sx={{
-          backgroundImage: `url(${bgImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundColor: "#2D6A4F",
           py: 8,
+          color: "#ffffff",
         }}
       >
         <Container maxWidth="lg">
           <Box sx={{ textAlign: "center", mb: 2 }}>
             <Typography
-              sx={{ fontSize: "35px", fontWeight: 600, color: "#27272f " }}
+              variant="h2"
+              sx={{ 
+                fontSize: "40px", 
+                fontWeight: 700, 
+                color: "#ffffff !important",
+                textShadow: "0 2px 4px rgba(0,0,0,0.1)"
+              }}
             >
-              About Us
+              Contact Us
             </Typography>
           </Box>
 
           <Breadcrumbs
-            separator={<NavigateNextIcon fontSize="small" />}
+            separator={<NavigateNextIcon fontSize="small" sx={{ color: "#ffffff !important" }} />}
             aria-label="breadcrumb"
-            sx={{ justifyContent: "center", display: "flex" }}
+            sx={{ 
+              "& .MuiBreadcrumbs-ol": { justifyContent: "center" },
+              "& .MuiBreadcrumbs-separator": { color: "#ffffff" }
+            }}
           >
-            <Link
-              href="/"
-              component="a"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                color: "#c24300",
-                fontSize: "24px",
-                textDecoration: "none", // optional: removes underline
+            <RouterLink
+              to="/"
+              style={{
+                color: "#ffffff",
+                fontSize: "20px",
+                textDecoration: "none",
+                fontWeight: 500
               }}
             >
               Home
-            </Link>
-            <Typography sx={{ color: "#00584b", fontSize: "24px" }}>
-              Contact Us:
+            </RouterLink>
+            <Typography sx={{ color: "#ffffff !important", fontSize: "20px", fontWeight: 500 }}>
+              Contact Us
             </Typography>
           </Breadcrumbs>
         </Container>
@@ -250,7 +257,7 @@ const ContactUs = () => {
             <Box sx={{ mt: 4 }}>
               <Typography
                 variant="h6"
-                sx={{ fontWeight: 600, mb: 2,  }}
+                sx={{ fontWeight: 600, mb: 2, }}
               >
                 Follow Us On Social Media
               </Typography>
@@ -374,7 +381,7 @@ const ContactUs = () => {
         <Container>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item xs={12} md={6} sx={{ mb: { xs: 3, md: 0 } }}>
-              <Typography variant="h5" sx={{ fontWeight: 600,color:'#00584b' }}>
+              <Typography variant="h5" sx={{ fontWeight: 600, color: '#00584b' }}>
                 Ready to start your wellness journey?
               </Typography>
             </Grid>

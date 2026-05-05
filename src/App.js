@@ -56,6 +56,7 @@ import { Navigate } from "react-router-dom";
 import { useUser } from "./context/UserContext";
 import ProtectedRoute from "./componants/common/ProtectedRoute";
 import OurOils from "./componants/pages/OurOils";
+import { DashboardProvider } from "./context/DashboardContext";
 
 const AnimatedWrapper = ({ children }) => (
   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }}>
@@ -158,10 +159,18 @@ function AppContent() {
     location.pathname.includes('-manager') ||
     location.pathname.includes('-approval');
 
+  const isDashboardLogin = location.pathname === '/dashboard/login';
+
   return (
     <>
       {isDashboard ? (
-        <AnimatedRoutes />
+        isDashboardLogin ? (
+          <AnimatedRoutes />
+        ) : (
+          <DashboardProvider>
+            <AnimatedRoutes />
+          </DashboardProvider>
+        )
       ) : (
         <Layout>
           <AnimatedRoutes />

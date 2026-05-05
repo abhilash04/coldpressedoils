@@ -27,6 +27,36 @@ import { Add as AddIcon, Remove as RemoveIcon } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CheckoutDrawer from "./CheckoutDrawer";
+import { config } from "../../config/config";
+
+// Assets
+import groundnutImg from '../../assets/ArtBoard-img-3.jpg';
+import gheeImg from '../../assets/gir-cow-ghee-1L.avif';
+import coconutImg from '../../assets/Artboard_1_copy_2_522bca11-ea72-4152-8063-ddbc6d57fdc7.webp';
+import sesameImg from '../../assets/2(1).png';
+import walnutImg from '../../assets/2(2).png';
+import safflowerImg from '../../assets/2(3).png';
+
+const assetMap = {
+  'groundnut': groundnutImg,
+  'ghee': gheeImg,
+  'coconut': coconutImg,
+  'til': sesameImg,
+  'walnut': walnutImg,
+  'safflower': safflowerImg
+};
+
+const getImageSrc = (image) => {
+  if (!image) return groundnutImg;
+  // Full URL (http/https) or data URI
+  if (image.startsWith('http') || image.startsWith('data:')) return image;
+  // Local asset map keys (e.g. 'groundnut', 'coconut')
+  if (assetMap[image]) return assetMap[image];
+  // Relative path from API server (e.g. /uploads/products/featured/product_xxx.png)
+  if (image.startsWith('/')) return `${config.apiUrl}${image}`;
+  // Bare filename fallback
+  return groundnutImg;
+};
 
 const CartDrawer = ({ open, onClose, cartItems, onCartUpdate }) => {
   const [showPriceSummary, setShowPriceSummary] = useState(false);
@@ -169,8 +199,8 @@ const CartDrawer = ({ open, onClose, cartItems, onCartUpdate }) => {
                     <Grid container spacing={1}>
                       <Grid item xs={4}>
                         <img
-                          src={item.featuredImage}
-                          alt={item.productImage}
+                          src={getImageSrc(item.featuredImage || item.image)}
+                          alt={item.name || item.productName}
                           style={{
                             width: "100%",
                             height: "auto",
@@ -188,7 +218,7 @@ const CartDrawer = ({ open, onClose, cartItems, onCartUpdate }) => {
                             letterSpacing: "0.5px",
                           }}
                         >
-                          {item.productName}
+                          {item.name || item.productName}
                         </Typography>
 
                         <Box sx={{ display: "flex", alignItems: "center", mt: 0.5 }}>
@@ -203,10 +233,10 @@ const CartDrawer = ({ open, onClose, cartItems, onCartUpdate }) => {
                               mr: 1,
                             }}
                           >
-                            ₹{item.scratchPrice}
+                            ₹{item.scratchPrice || item.oldPrice}
                           </Typography>
                           <Typography variant="body2" sx={{ color: "#004d40" }}>
-                            ({Math.round(((item.scratchPrice - item.price) * 100) / item.scratchPrice)}% off)
+                            ({Math.round(((( item.scratchPrice || item.oldPrice) - item.price) * 100) / (item.scratchPrice || item.oldPrice || 1))}% off)
                           </Typography>
                         </Box>
 

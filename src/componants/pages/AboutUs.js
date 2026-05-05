@@ -22,7 +22,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 
 // Replace with your actual image path
 import ownerImg from "../../assets/missed logo.png";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 const points = [
   "Committed to promoting sustainable and organica oils helps healthier living.",
@@ -55,46 +55,52 @@ const AboutUs = () => {
   return (
     <>
       <Header />
-      <HeaderSec  cartItems={cartItems} onCartUpdate={(updatedCart)=>setCartItems(updatedCart)}/>
+      <HeaderSec cartItems={cartItems} onCartUpdate={(updatedCart) => setCartItems(updatedCart)} />
 
-      <Box sx={{ backgroundColor: "#fff", py: 3 }}>
+      <Box sx={{ backgroundColor: "#fff" }}>
         <Box
           sx={{
-            backgroundImage: `url(${bgImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundColor: "#2D6A4F",
             py: 8,
+            color: "#ffffff",
           }}
         >
           <Container maxWidth="lg">
             <Box sx={{ textAlign: "center", mb: 2 }}>
               <Typography
-                sx={{ fontSize: "35px", fontWeight: 600, color: "#27272f " }}
+                variant="h2"
+                sx={{ 
+                  fontSize: "40px", 
+                  fontWeight: 700, 
+                  color: "#ffffff !important",
+                  textShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                }}
               >
                 About Us
               </Typography>
             </Box>
 
             <Breadcrumbs
-              separator={<NavigateNextIcon fontSize="small" />}
+              separator={<NavigateNextIcon fontSize="small" sx={{ color: "#ffffff !important" }} />}
               aria-label="breadcrumb"
-              sx={{ justifyContent: "center", display: "flex" }}
+              sx={{ 
+                "& .MuiBreadcrumbs-ol": { justifyContent: "center" },
+                "& .MuiBreadcrumbs-separator": { color: "#ffffff" }
+              }}
             >
-              <Link
-                href="/"
-                component="a"
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "#c24300",
-                  fontSize: "24px",
-                  textDecoration: "none", // optional: removes underline
+              <RouterLink
+                to="/"
+                style={{
+                  color: "#ffffff",
+                  fontSize: "20px",
+                  textDecoration: "none",
+                  fontWeight: 500
                 }}
               >
                 Home
-              </Link>
-              <Typography sx={{ color: "#00584b", fontSize: "24px" }}>
-                About Us:
+              </RouterLink>
+              <Typography sx={{ color: "#ffffff !important", fontSize: "20px", fontWeight: 500 }}>
+                About Us
               </Typography>
             </Breadcrumbs>
           </Container>
