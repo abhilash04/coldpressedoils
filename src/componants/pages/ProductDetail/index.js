@@ -40,6 +40,7 @@ import { Modal, Backdrop, Fade, IconButton as MuiIconButton } from '@mui/materia
 import videoSource from '../../../assets/video1.mp4';
 import SEO from '../../common/SEO';
 import { apiList, invokeGetApi } from '../../../services/apiServices';
+import { config } from '../../../config/config';
 
 // Assets
 import groundnutImg from '../../../assets/ArtBoard-img-3.jpg';
@@ -58,6 +59,14 @@ const assetMap = {
   'safflower': safflowerImg
 };
 
+const getImageSrc = (image) => {
+  if (!image) return "";
+  if (image.startsWith('http') || image.startsWith('data:')) return image;
+  if (assetMap[image]) return assetMap[image];
+  if (image.startsWith('/')) return `${config.apiUrl}${image}`;
+  return `${config.apiUrl}/uploads/products/${image}`;
+};
+
 const ProductDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -66,14 +75,17 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [size, setSize] = useState('1L');
+  const [selectedVariant, setSelectedVariant] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [tabValue, setTabValue] = useState(0);
   const [videoOpen, setVideoOpen] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
 
+  const currentPrice = selectedVariant ? selectedVariant.price : (product?.price || 0);
+  const currentSize = selectedVariant ? selectedVariant.size : (product?.weight || '1L');
+
   const handleAddToCart = () => {
-    addToCart(product, quantity, size);
+    addToCart({ ...product, price: currentPrice }, quantity, currentSize);
     setCartOpen(true);
   };
 
@@ -88,9 +100,24 @@ const ProductDetail = () => {
       setLoading(true);
       try {
         const response = await invokeGetApi("/" + slug);
-        setProduct(response.data);
-        if (response.data.variants && response.data.variants.length > 0) {
-          setSize(response.data.variants[2] || response.data.variants[0]);
+        const data = response.data;
+        // Parse variants if string
+        if (data.variants && typeof data.variants === 'string') {
+          data.variants = JSON.parse(data.variants);
+        }
+        if (data.images && typeof data.images === 'string') {
+          try {
+            data.images = JSON.parse(data.images);
+          } catch (e) {
+            data.images = [data.images]; // Fallback to single string if not JSON
+          }
+        }
+        if (!data.images || (Array.isArray(data.images) && data.images.length === 0)) {
+            data.images = [data.image];
+        }
+        setProduct(data);
+        if (data.variants && data.variants.length > 0) {
+          setSelectedVariant(data.variants[0]);
         }
       } catch (error) {
         console.error("Error fetching product details:", error);
@@ -102,7 +129,7 @@ const ProductDetail = () => {
   }, [slug]);
 
   const getMappedImage = (imgKey) => {
-    return assetMap[imgKey] || groundnutImg;
+    return getImageSrc(imgKey);
   };
 
   if (loading) return (
@@ -144,7 +171,7 @@ const ProductDetail = () => {
             {product?.name}
           </Typography>
           <Typography variant="h6" sx={{ fontWeight: 800, color: '#1B1F23', lineHeight: 1 }}>
-            ₹{product?.price}
+            ₹{currentPrice}
             {product?.oldPrice && (
               <Typography component="span" variant="caption" sx={{ textDecoration: 'line-through', color: '#999', ml: 1 }}>
                 ₹{product?.oldPrice}
@@ -187,7 +214,7 @@ const ProductDetail = () => {
               <Box sx={{ position: 'relative' }}>
                 <Box
                   component="img"
-                  src={getMappedImage(product.images?.[selectedImage])}
+                  src={getMappedImage(product.images?.[selectedImage] || product.image)}
                   sx={{ width: '100%', height: 'auto', backgroundColor: '#F5F5F5', mb: 2 }}
                 />
 
@@ -242,7 +269,7 @@ const ProductDetail = () => {
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, mb: 1 }}>
-              <Typography variant="h3" color="primary.main" sx={{ fontWeight: 700 }}>₹{product.price}</Typography>
+              <Typography variant="h3" color="primary.main" sx={{ fontWeight: 700 }}>₹{currentPrice}</Typography>
               {product.oldPrice && (
                 <Typography variant="h5" color="text.secondary" sx={{ textDecoration: 'line-through' }}>₹{product.oldPrice}</Typography>
               )}
@@ -252,20 +279,27 @@ const ProductDetail = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 4, bgcolor: '#F9FAF4', p: 1.5, border: '1px dashed #B7791F' }}>
               <Box component="span" sx={{ fontSize: '1.2rem' }}>🏆</Box>
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                Earn {Math.floor(product.price / 10)} Loyalty Points with this order
+                Earn {Math.floor(currentPrice / 10)} Loyalty Points with this order
               </Typography>
             </Box>
 
             <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2 }}>SELECT SIZE</Typography>
             <ToggleButtonGroup
-              value={size}
+              value={selectedVariant?.size || currentSize}
               exclusive
-              onChange={(e, nextSize) => nextSize && setSize(nextSize)}
+              onChange={(e, nextSize) => {
+                const variant = product.variants.find(v => v.size === nextSize);
+                if (variant) setSelectedVariant(variant);
+              }}
               sx={{ mb: 4 }}
             >
-              {product.variants?.map((v) => (
-                <ToggleButton key={v} value={v} sx={{ px: 3 }}>{v}</ToggleButton>
-              ))}
+              {product.variants && Array.isArray(product.variants) && product.variants.length > 0 ? (
+                product.variants.map((v) => (
+                  <ToggleButton key={v.size} value={v.size} sx={{ px: 3 }}>{v.size}</ToggleButton>
+                ))
+              ) : (
+                <ToggleButton value={product.weight || '1L'} sx={{ px: 3 }}>{product.weight || '1L'}</ToggleButton>
+              )}
             </ToggleButtonGroup>
 
             <Box sx={{ display: 'flex', gap: 2, mb: 6 }}>
@@ -310,7 +344,6 @@ const ProductDetail = () => {
           >
             <Tab label="DESCRIPTION" />
             <Tab label="NUTRITION & BENEFITS" />
-            <Tab label="HOW TO USE" />
           </Tabs>
 
           <Box sx={{ minHeight: 200 }}>
@@ -346,12 +379,6 @@ const ProductDetail = () => {
                   ))}
                 </Grid>
               </Grid>
-            )}
-
-            {tabValue === 2 && (
-              <Typography variant="body1" sx={{ lineHeight: 1.8 }}>
-                {product.howToUse}
-              </Typography>
             )}
           </Box>
         </Box>

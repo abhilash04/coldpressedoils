@@ -59,27 +59,30 @@ const ShopPage = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await invokeGetApi(apiList.allProducts, {
-        category: filters.category,
-        minPrice: filters.priceRange[0],
-        maxPrice: filters.priceRange[1]
-      });
+      const response = await invokeGetApi(apiList.getAllProducts);
 
-      let finalProducts = response.data.length > 0 ? response.data : allDummyProducts;
-
-      // Filter dummy data if needed
-      if (filters.category && response.data.length === 0) {
-        finalProducts = allDummyProducts.filter(p => p.category === filters.category);
+      let allFetched = [];
+      if (response?.data?.products && Array.isArray(response.data.products)) {
+        allFetched = response.data.products;
+      } else if (Array.isArray(response?.data)) {
+        allFetched = response.data;
       }
 
-      setProducts(finalProducts);
+      // Apply client-side filters
+      let filtered = allFetched.length > 0 ? allFetched : allDummyProducts;
+      if (filters.category) {
+        filtered = filtered.filter(p => p.category === filters.category || p.category_id === filters.category);
+      }
+      if (filters.priceRange) {
+        filtered = filtered.filter(p => Number(p.price) >= filters.priceRange[0] && Number(p.price) <= filters.priceRange[1]);
+      }
+      if (filters.sortBy === 'price-low') filtered = [...filtered].sort((a, b) => Number(a.price) - Number(b.price));
+      if (filters.sortBy === 'price-high') filtered = [...filtered].sort((a, b) => Number(b.price) - Number(a.price));
+
+      setProducts(filtered);
     } catch (error) {
       console.error("Error fetching products:", error);
-      let finalProducts = allDummyProducts;
-      if (filters.category) {
-        finalProducts = allDummyProducts.filter(p => p.category === filters.category);
-      }
-      setProducts(finalProducts);
+      setProducts(allDummyProducts);
     } finally {
       setLoading(false);
     }

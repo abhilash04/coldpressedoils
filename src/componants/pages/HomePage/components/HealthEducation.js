@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Container, Grid, Typography, Button, List, ListItem, ListItemIcon, ListItemText, useTheme, useMediaQuery } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
-
+import img from '../../../../assets/images/hero_banner.png';
 const HealthEducation = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -12,7 +12,7 @@ const HealthEducation = () => {
           <Grid item xs={12} md={6}>
             <Box
               component="img"
-              src="/assets/images/hero_banner.png"
+              src={img}
               alt="Health Benefits"
               sx={{
                 width: '100%',

@@ -79,11 +79,15 @@ const Footer = () => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <Phone fontSize="small" sx={{ color: 'primary.main' }} />
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>+91 9XXXX XXXXX</Typography>
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>+91 99722 80728</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <Email fontSize="small" sx={{ color: 'primary.main' }} />
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>info@coldpressedoils.in</Typography>
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>rajrajeshwarienterprises721@gmail.com</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+                <LocationOn fontSize="small" sx={{ color: 'primary.main', mt: 0.3 }} />
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>31/12, 4th Main Road, Puttenahalli,<br />J. P. Nagar, 7th Phase,<br />Bengaluru - 560078</Typography>
               </Box>
             </Box>
           </Grid>

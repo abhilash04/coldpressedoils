@@ -221,6 +221,13 @@ const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
           {productsData.map((item, idx) => {
             const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
             const quantity = cartItem ? cartItem.quantity : 0;
+            const getImageSource = (item) => {
+              if (item.featuredImage && item.featuredImage.startsWith('/uploads')) {
+                return `${config.apiUrl}${item.featuredImage}`;
+              }
+              return item.featuredImage;
+            };
+
             return (
               <Box
                 key={idx}
@@ -235,7 +242,7 @@ const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
                   minWidth: 250,
                   backgroundColor: "#fff",
                 }}
-                onClick={() => navigate(`/products/${item.ogUrl}`)}
+                onClick={() => navigate(`/product/${item.ogUrl}`)}
               >
                 {/* Labels */}
                 <Box sx={{ position: "absolute", top: 0, left: 16 }}>
@@ -269,8 +276,8 @@ const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
                 {/* Image */}
                 <CardMedia
                   component="img"
-                  image={item.featuredImage}
-                  alt={item.productNamae}
+                  image={getImageSource(item)}
+                  alt={item.productName}
                   sx={{
                     objectFit: "contain",
                     height: 260,

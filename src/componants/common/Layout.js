@@ -25,6 +25,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { useCart } from '../../context/CartContext';
 import LeadPopup from './LeadPopup';
+import { config } from '../../config/config';
 
 // Assets for Sidebar Mapping
 import groundnutImg from '../../assets/ArtBoard-img-3.jpg';
@@ -55,10 +56,16 @@ const Layout = ({ children }) => {
     restDelta: 0.001
   });
 
-  const getMappedImage = (img) => assetMap[img] || img;
+  const getMappedImage = (img) => {
+    if (!img) return groundnutImg;
+    if (img.startsWith('http') || img.startsWith('data:')) return img;
+    if (assetMap[img]) return assetMap[img];
+    if (img.startsWith('/')) return `${config.apiUrl}${img}`;
+    return img;
+  };
 
   const whatsappMessage = encodeURIComponent("Namaste! I'm interested in Amrutha Dharee pure oils. Can you help me with my purchase?");
-  const whatsappNumber = "912";
+  const whatsappNumber = "919972280728";
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', position: 'relative' }}>
@@ -108,7 +115,7 @@ const Layout = ({ children }) => {
             <List sx={{ flexGrow: 1, overflow: 'auto' }}>
               {cartItems.map((item) => (
                 <ListItem key={`${item.id}-${item.size}`} sx={{ px: 0, mb: 2 }}>
-                  <Box component="img" src={getMappedImage(item.image)} sx={{ width: 70, height: 70, objectFit: 'contain', bgcolor: '#F5F5F5', mr: 2 }} />
+                  <Box component="img" src={getMappedImage(item.featuredImage || item.image)} sx={{ width: 70, height: 70, objectFit: 'contain', bgcolor: '#F5F5F5', mr: 2 }} />
                   <ListItemText
                     primary={item.name}
                     secondary={`Size: ${item.size} | ₹${item.price}`}

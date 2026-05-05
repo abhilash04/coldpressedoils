@@ -19,6 +19,8 @@ const AdminDashboard = () => {
   // Form State
   const [open, setOpen] = useState(false);
   const [currentProduct, setCurrentProduct] = useState({ name: '', price: '', slug: '', category_id: 1 });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
 
   const fetchData = async () => {
     setLoading(true);
@@ -44,11 +46,37 @@ const AdminDashboard = () => {
 
   const handleSave = async () => {
     try {
-      await axios.post(`${config.apiUrl}/admin/save-product`, currentProduct);
+      const formData = new FormData();
+      Object.keys(currentProduct).forEach(key => {
+        if (currentProduct[key] !== null && currentProduct[key] !== undefined) {
+          formData.append(key, currentProduct[key]);
+        }
+      });
+      
+      if (selectedFile) {
+        formData.append('image_file', selectedFile);
+      }
+
+      await axios.post(`${config.apiUrl}/admin/save-product`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
       setOpen(false);
+      setSelectedFile(null);
+      setPreviewUrl('');
       fetchData();
     } catch (error) {
       alert("Error saving product");
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
@@ -67,7 +95,16 @@ const AdminDashboard = () => {
     <Container maxWidth="lg" sx={{ py: 6 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: 800 }}>Admin Command Center</Typography>
-        <Button variant="contained" startIcon={<Add />} onClick={() => { setCurrentProduct({ name: '', price: '', slug: '', category_id: 1 }); setOpen(true); }}>
+        <Button 
+          variant="contained" 
+          startIcon={<Add />} 
+          onClick={() => { 
+            setCurrentProduct({ name: '', price: '', slug: '', category_id: 1 }); 
+            setSelectedFile(null);
+            setPreviewUrl('');
+            setOpen(true); 
+          }}
+        >
           New Product
         </Button>
       </Box>
@@ -100,7 +137,12 @@ const AdminDashboard = () => {
                       <TableCell>₹{p.price}</TableCell>
                       <TableCell><Chip label={p.status} size="small" color="success" variant="outlined" /></TableCell>
                       <TableCell align="right">
-                        <IconButton size="small" onClick={() => { setCurrentProduct(p); setOpen(true); }}><Edit /></IconButton>
+                        <IconButton size="small" onClick={() => { 
+                          setCurrentProduct(p); 
+                          setSelectedFile(null);
+                          setPreviewUrl('');
+                          setOpen(true); 
+                        }}><Edit /></IconButton>
                         <IconButton size="small" color="error" onClick={() => handleDelete(p.id)}><Delete /></IconButton>
                       </TableCell>
                     </TableRow>
@@ -144,9 +186,34 @@ const AdminDashboard = () => {
             <Grid item xs={12}>
               <TextField 
                 fullWidth multiline rows={3} label="Short Description" 
-                value={currentProduct.description} 
+                value={currentProduct.description || ''} 
                 onChange={(e) => setCurrentProduct({...currentProduct, description: e.target.value})} 
               />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>Product Image</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                { (previewUrl || currentProduct.image) && (
+                  <Box 
+                    component="img" 
+                    src={previewUrl || `${config.apiUrl}${currentProduct.image}`} 
+                    sx={{ width: 80, height: 80, borderRadius: 1, objectFit: 'cover', border: '1px solid #ddd' }} 
+                  />
+                )}
+                <Button
+                  variant="outlined"
+                  component="label"
+                  size="small"
+                >
+                  Upload Image
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleFileChange}
+                  />
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </DialogContent>

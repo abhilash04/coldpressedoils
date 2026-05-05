@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, Button, Container, Grid, useTheme, useMediaQuery } from '@mui/material';
 import { motion } from 'framer-motion';
+import img from '../../../../assets/images/hero_banner.png';
 
 const Hero = () => {
   const theme = useTheme();
@@ -10,7 +11,7 @@ const Hero = () => {
     <Box
       sx={{
         position: 'relative',
-        height: { xs: '40vh', md: '80vh' },
+        height: { xs: '85vh', sm: '70vh', md: '85vh' },
         width: '100%',
         overflow: 'hidden',
         display: 'flex',
@@ -21,7 +22,7 @@ const Hero = () => {
       {/* Background Image with Overlay */}
       <Box
         component="img"
-        src="/assets/images/hero_banner.png"
+        src={img}
         alt="Cold Pressed Oil"
         sx={{
           position: 'absolute',

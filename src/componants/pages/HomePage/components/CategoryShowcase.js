@@ -2,34 +2,42 @@ import React from 'react';
 import { Box, Container, Grid, Typography, Button, Card, CardMedia, CardActionArea, useTheme, useMediaQuery } from '@mui/material';
 import { motion } from 'framer-motion';
 
+// Import category images
+import coldPressedOilsImg from '../../../../assets/images/cold_pressed_oils.png';
+import floursImg from '../../../../assets/images/gluten_free_flours.png';
+import jaggeryImg from '../../../../assets/images/jaggery_sweeteners.png';
+import masalasImg from '../../../../assets/images/masalas_spices.png';
+import rockSaltImg from '../../../../assets/images/rock_salt.png';
+
 const categories = [
   {
     title: 'Cold Pressed Oils',
-    image: '/assets/images/hero_banner.png',
+    image: coldPressedOilsImg,
     grid: 6,
     path: '/shop/cold-pressed-oils',
   },
   {
-    title: 'Gluten Free Flours',
-    image: '/assets/images/groundnut_oil.png',
+    title: 'Masalas & Spices',
+    image: masalasImg,
     grid: 6,
+    path: '/shop/masalas-spices',
+  },
+  {
+    title: 'Gluten Free Flours',
+    image: floursImg,
+    grid: 4,
     path: '/shop/flours',
   },
   {
     title: 'Jaggery & Sweeteners',
-    image: '/assets/images/hero_banner.png',
+    image: jaggeryImg,
     grid: 4,
     path: '/shop/jaggery-sweeteners',
   },
-  {
-    title: 'Masalas & Spices',
-    image: '/assets/images/groundnut_oil.png',
-    grid: 4,
-    path: '/shop/masalas-spices',
-  },
+
   {
     title: 'Rock Salt',
-    image: '/assets/images/hero_banner.png',
+    image: rockSaltImg,
     grid: 4,
     path: '/shop/rock-salt-condiments',
   },
@@ -95,6 +103,7 @@ const CategoryShowcase = () => {
                         sx={{
                           fontWeight: 700,
                           textAlign: 'center',
+                          color: 'white',
                           lineHeight: 1.2,
                           mb: isMobile ? 1 : 2
                         }}

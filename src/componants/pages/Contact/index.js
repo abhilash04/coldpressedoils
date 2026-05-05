@@ -85,7 +85,7 @@ const ContactPage = () => {
                   </IconButton>
                   <Box>
                     <Typography variant="caption" color="text.secondary">CALL US</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 600 }}>+91 9XXXXXXXXX</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>+91 99722 80728</Typography>
                   </Box>
                 </Box>
 
@@ -95,7 +95,7 @@ const ContactPage = () => {
                   </IconButton>
                   <Box>
                     <Typography variant="caption" color="text.secondary">WHATSAPP CHAT</Typography>
-                    <Link href="https://wa.me/919XXXXXXXXX" sx={{ display: 'block', fontWeight: 600, color: 'inherit', textDecoration: 'none' }}>
+                    <Link href="https://wa.me/919972280728" target="_blank" sx={{ display: 'block', fontWeight: 600, color: 'inherit', textDecoration: 'none' }}>
                       Click to chat with us
                     </Link>
                   </Box>
@@ -107,7 +107,7 @@ const ContactPage = () => {
                   </IconButton>
                   <Box>
                     <Typography variant="caption" color="text.secondary">EMAIL US</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 600 }}>info@coldpressedoils.in</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>rajrajeshwarienterprises721@gmail.com</Typography>
                   </Box>
                 </Box>
 
@@ -117,7 +117,7 @@ const ContactPage = () => {
                   </IconButton>
                   <Box>
                     <Typography variant="caption" color="text.secondary">VISIT US</Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 600 }}>Shree Ram Krishna Oil Mills, Pune, Maharashtra</Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>31/12, 4th Main Road, Puttenahalli,<br />J. P. Nagar, 7th Phase, Bengaluru - 560078</Typography>
                   </Box>
                 </Box>
               </Paper>
@@ -135,11 +135,17 @@ const ContactPage = () => {
         </Grid>
       </Container>
 
-      {/* Map Placeholder */}
-      <Box sx={{ height: isMobile ? '300px' : '450px', width: '100%', bgcolor: '#EEE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
-          Google Maps Integration Placeholder
-        </Typography>
+      <Box sx={{ height: isMobile ? '300px' : '450px', width: '100%' }}>
+        <iframe
+          title="Amrutha Dharee Location"
+          src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3889.171164455281!2d77.57992207507517!3d12.896712987411837!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTLCsDUzJzQ4LjIiTiA3N8KwMzQnNTcuMCJF!5e0!3m2!1sen!2sin!4v1777893738927!5m2!1sen!2sin"
+          width="100%"
+          height="100%"
+          style={{ border: 0, display: 'block' }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
       </Box>
     </Box>
   );
