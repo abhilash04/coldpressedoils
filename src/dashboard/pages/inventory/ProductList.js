@@ -26,7 +26,7 @@ const ProductList = () => {
   const [previewUrl, setPreviewUrl]     = useState("");
   const [saving, setSaving]       = useState(false);
   const [snackbar, setSnackbar]   = useState({ open: false, message: "", severity: "success" });
-  const [variantInput, setVariantInput] = useState({ size: "", price: "", stock: "" });
+  const [variantInput, setVariantInput] = useState({ size: "", price: "", stock: "", originalPrice: "" });
 
   useEffect(() => { fetchProducts(); }, []);
 
@@ -62,7 +62,7 @@ const ProductList = () => {
       ...prev,
       variants: [...(prev.variants || []), variantInput]
     }));
-    setVariantInput({ size: "", price: "", stock: "" });
+    setVariantInput({ size: "", price: "", stock: "", originalPrice: "" });
   };
 
   const handleRemoveVariant = (index) => {
@@ -235,7 +235,7 @@ const ProductList = () => {
       </Box>
 
       {/* ── Edit Product Dialog ── */}
-      <Dialog open={editOpen} onClose={() => setEditOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog open={editOpen} onClose={() => setEditOpen(false)} maxWidth="md" fullWidth>
         <DialogTitle sx={{ fontWeight: 700, color: "#2D6A4F" }}>
           Edit Product
         </DialogTitle>
@@ -322,13 +322,16 @@ const ProductList = () => {
                 </Typography>
                 <Box sx={{ p: 2, bgcolor: "#f5f5f5", borderRadius: 1 }}>
                   <Grid container spacing={1} alignItems="center">
-                    <Grid item xs={5}>
+                    <Grid item xs={3}>
                       <TextField fullWidth size="small" label="Size (1L or 500g)" value={variantInput.size} onChange={(e) => setVariantInput({...variantInput, size: e.target.value})} />
                     </Grid>
                     <Grid item xs={3}>
-                      <TextField fullWidth size="small" label="Price" type="number" value={variantInput.price} onChange={(e) => setVariantInput({...variantInput, price: e.target.value})} />
+                      <TextField fullWidth size="small" label="Sale Price" type="number" value={variantInput.price} onChange={(e) => setVariantInput({...variantInput, price: e.target.value})} />
                     </Grid>
                     <Grid item xs={3}>
+                      <TextField fullWidth size="small" label="Original Price" type="number" value={variantInput.originalPrice} onChange={(e) => setVariantInput({...variantInput, originalPrice: e.target.value})} />
+                    </Grid>
+                    <Grid item xs={2}>
                       <TextField fullWidth size="small" label="Stock" type="number" value={variantInput.stock} onChange={(e) => setVariantInput({...variantInput, stock: e.target.value})} />
                     </Grid>
                     <Grid item xs={1}>
@@ -339,7 +342,7 @@ const ProductList = () => {
                     {(editProduct.variants || []).map((v, i) => (
                       <Chip 
                         key={i} 
-                        label={`${v.size}: ₹${v.price} (${v.stock})`} 
+                        label={`${v.size}: ₹${v.price} ${v.originalPrice ? `(MRP: ₹${v.originalPrice})` : ""} [Stock: ${v.stock}]`} 
                         size="small" 
                         onDelete={() => handleRemoveVariant(i)}
                         sx={{ m: 0.5, bgcolor: "#E8F5E9" }}

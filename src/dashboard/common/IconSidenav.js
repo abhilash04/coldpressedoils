@@ -187,6 +187,27 @@ export default function MiniDrawer() {
       //   ],
       // },
       {
+        text: "Inventory Manager",
+        icon: <SettingsIcon />,
+        subItems: [
+          {
+            text: "Product List",
+            icon: <SchoolIcon />,
+            path: "/inventory-manager/product-list",
+          },
+          {
+            text: "Add New Product",
+            path: "/inventory-manager/add-new-product",
+            icon: <LibraryBooksIcon />,
+          },
+          {
+            text: "Categories",
+            path: "/inventory-manager/categories",
+            icon: <LocalLibraryIcon />,
+          },
+        ],
+      },
+      {
         text: "Leads Manager",
         icon: <LeadsIcon />,
         subItems: [

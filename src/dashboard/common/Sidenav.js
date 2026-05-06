@@ -65,7 +65,7 @@ const drawerWidth = 240;
 
 
 const Sidebar = () => {
-  const { isSidebarCollapsed } = useDashboard();
+  const { isSidebarOpen } = useDashboard();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -168,7 +168,7 @@ const Sidebar = () => {
       //       path: "/university-manager/amenities",
       //       icon: <LocalLibraryIcon />,
       //     },
-
+      // 
       //     {
       //       text: "Placement Companies",
       //       path: "/university-manager/placement-company",
@@ -403,7 +403,7 @@ const Sidebar = () => {
   const openPopper = Boolean(anchorEl);
   const id = openPopper ? "simple-popover" : undefined;
 
-  if (isSidebarCollapsed) {
+  if (!isSidebarOpen) {
     return <MiniDrawer />;
   }
 
