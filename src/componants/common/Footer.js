@@ -51,7 +51,7 @@ const Footer = () => {
               <Link component={RouterLink} to="/about" sx={{ color: '#FFF', opacity: 0.7, '&:hover': { opacity: 1 } }}>About Us</Link>
               <Link component={RouterLink} to="/our-oils" sx={{ color: '#FFF', opacity: 0.7, '&:hover': { opacity: 1 } }}>Our Oils</Link>
               <Link component={RouterLink} to="/our-process" sx={{ color: '#FFF', opacity: 0.7, '&:hover': { opacity: 1 } }}>Our Process</Link>
-              <Link component={RouterLink} to="/blog" sx={{ color: '#FFF', opacity: 0.7, '&:hover': { opacity: 1 } }}>Health Blog</Link>
+              {/* <Link component={RouterLink} to="/blog" sx={{ color: '#FFF', opacity: 0.7, '&:hover': { opacity: 1 } }}>Health Blog</Link> */}
               <Link component={RouterLink} to="/contact" sx={{ color: '#FFF', opacity: 0.7, '&:hover': { opacity: 1 } }}>Contact Us</Link>
             </Box>
           </Grid>

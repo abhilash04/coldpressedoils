@@ -14,8 +14,8 @@ const OurProcess = () => {
     <Box>
       <Box sx={{ py: 10, backgroundColor: '#1B4332', color: '#FFF' }}>
         <Container maxWidth="md" sx={{ textAlign: 'center' }}>
-          <Typography variant="h2" gutterBottom>How We Make It</Typography>
-          <Typography variant="h6" sx={{ fontWeight: 400, opacity: 0.8 }}>
+          <Typography variant="h2" gutterBottom sx={{ color: '#ffffff' }}>How We Make It</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 400, opacity: 0.8, color: '#ffffff' }}>
             Transparency in every drop. Witness the journey from the farm to your kitchen.
           </Typography>
         </Container>

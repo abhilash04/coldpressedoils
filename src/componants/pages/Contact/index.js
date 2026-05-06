@@ -30,10 +30,10 @@ const ContactPage = () => {
 
   return (
     <Box>
-      <Box sx={{ py: isMobile ? 6 : 10, bgcolor: 'primary.main', color: '#FFF', textAlign: 'center' }}>
+      <Box sx={{ py: isMobile ? 6 : 10, bgcolor: 'primary.main', color: '#ffffffff', textAlign: 'center' }}>
         <Container maxWidth="md">
-          <Typography variant={isMobile ? "h3" : "h2"} gutterBottom sx={{ fontWeight: 800 }}>Contact Us</Typography>
-          <Typography variant="h6" sx={{ fontWeight: 400, opacity: 0.8 }}>
+          <Typography variant={isMobile ? "h3" : "h2"} gutterBottom sx={{ fontWeight: 800, color: '#ffffffff !important' }}>Contact Us</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 400, opacity: 0.8, color: '#ffffffff !important' }}>
             Have a question about our oils? We're here to help you on your health journey.
           </Typography>
         </Container>

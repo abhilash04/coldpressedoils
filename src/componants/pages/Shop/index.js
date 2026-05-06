@@ -32,12 +32,13 @@ import walnutImg from '../../../assets/2(2).png';
 import safflowerImg from '../../../assets/2(3).png';
 
 const allDummyProducts = [
-  { id: 1, name: 'Wood Pressed Groundnut Oil', price: 450, oldPrice: 520, image: groundnutImg, slug: 'groundnut-oil', rating: 4.8, category: 'oils' },
-  { id: 2, name: 'Pure Gir Cow Ghee', price: 1250, oldPrice: 1500, image: gheeImg, slug: 'gir-cow-ghee', rating: 5.0, category: 'ghee' },
-  { id: 3, name: 'Extra Virgin Coconut Oil', price: 650, oldPrice: 750, image: coconutImg, slug: 'virgin-coconut-oil', rating: 4.7, category: 'oils' },
-  { id: 4, name: 'Traditional Black Til Oil', price: 580, oldPrice: 650, image: sesameImg, slug: 'black-til-oil', rating: 4.9, category: 'oils' },
-  { id: 6, name: 'Premium Walnut Oil', price: 950, oldPrice: 1100, image: walnutImg, slug: 'walnut-oil', rating: 4.8, category: 'specialty' },
-  { id: 7, name: 'Natural Safflower Oil', price: 480, oldPrice: 550, image: safflowerImg, slug: 'safflower-oil', rating: 4.7, category: 'oils' },
+  { id: 1, name: 'Wood Pressed Groundnut Oil', price: 450, oldPrice: 520, image: groundnutImg, slug: 'groundnut-oil', rating: 4.8, category_id: 1 },
+  { id: 2, name: 'Pure Gir Cow Ghee', price: 1250, oldPrice: 1500, image: gheeImg, slug: 'gir-cow-ghee', rating: 5.0, category_id: 1 },
+  { id: 3, name: 'Extra Virgin Coconut Oil', price: 650, oldPrice: 750, image: coconutImg, slug: 'virgin-coconut-oil', rating: 4.7, category_id: 1 },
+  { id: 4, name: 'Organic Turmeric Powder', price: 180, oldPrice: 220, image: sesameImg, slug: 'turmeric-powder', rating: 4.9, category_id: 2 },
+  { id: 5, name: 'Natural Jaggery Blocks', price: 120, oldPrice: 150, image: coconutImg, slug: 'natural-jaggery', rating: 4.8, category_id: 3 },
+  { id: 6, name: 'Gluten Free Bajra Flour', price: 95, oldPrice: 120, image: walnutImg, slug: 'bajra-flour', rating: 4.8, category_id: 4 },
+  { id: 7, name: 'Pink Himalayan Salt', price: 80, oldPrice: 100, image: safflowerImg, slug: 'rock-salt', rating: 4.7, category_id: 5 },
 ];
 
 const ShopPage = () => {
@@ -49,6 +50,7 @@ const ShopPage = () => {
   const [filters, setFilters] = useState({
     category: '',
     priceRange: [0, 2000],
+    volumes: [],
     sortBy: 'relevance'
   });
 
@@ -71,10 +73,26 @@ const ShopPage = () => {
       // Apply client-side filters
       let filtered = allFetched.length > 0 ? allFetched : allDummyProducts;
       if (filters.category) {
-        filtered = filtered.filter(p => p.category === filters.category || p.category_id === filters.category);
+        filtered = filtered.filter(p =>
+          p.category === filters.category ||
+          Number(p.category_id) === Number(filters.category)
+        );
       }
       if (filters.priceRange) {
         filtered = filtered.filter(p => Number(p.price) >= filters.priceRange[0] && Number(p.price) <= filters.priceRange[1]);
+      }
+      if (filters.volumes && filters.volumes.length > 0) {
+        filtered = filtered.filter(p => {
+          const pVolumes = [];
+          if (p.weight) pVolumes.push(p.weight.toLowerCase());
+          if (p.variants) {
+            try {
+              const vars = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants;
+              vars.forEach(v => pVolumes.push(v.size.toLowerCase()));
+            } catch (e) { }
+          }
+          return filters.volumes.some(v => pVolumes.includes(v.toLowerCase()));
+        });
       }
       if (filters.sortBy === 'price-low') filtered = [...filtered].sort((a, b) => Number(a.price) - Number(b.price));
       if (filters.sortBy === 'price-high') filtered = [...filtered].sort((a, b) => Number(b.price) - Number(a.price));
@@ -92,10 +110,22 @@ const ShopPage = () => {
     fetchProducts();
   }, [filters]);
 
+  const categoryLabels = {
+    1: 'Cold Pressed Oils',
+    2: 'Spices & Powders',
+    3: 'Jaggery & Sweeteners',
+    4: 'Healthy Flours',
+    5: 'Rock Salt'
+  };
+
+  const currentCategoryLabel = filters.category 
+    ? (categoryLabels[filters.category] || String(filters.category).replace('-', ' ').toUpperCase())
+    : 'ALL PRODUCTS';
+
   return (
     <Box sx={{ py: 4 }}>
       <SEO
-        title={filters.category ? `${filters.category.replace('-', ' ').toUpperCase()} Shop` : "Shop All Natural Products"}
+        title={filters.category ? `${currentCategoryLabel} Shop` : "Shop All Natural Products"}
         description="Browse our wide range of organic, wood-pressed oils, gluten-free flours, and natural sweeteners. Pure health delivered at your doorstep."
       />
       <Container maxWidth="lg">
@@ -136,7 +166,7 @@ const ShopPage = () => {
                       lineHeight: 1.1
                     }}
                   >
-                    {filters.category ? filters.category.replace('-', ' ').toUpperCase() : 'ALL PRODUCTS'}
+                    {currentCategoryLabel}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 1.5 }}>
                     <Box sx={{ width: 40, height: 2, bgcolor: '#B7791F' }} />
@@ -213,7 +243,7 @@ const ShopPage = () => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
                 <Box>
                   <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                    {filters.category ? filters.category.replace('-', ' ').toUpperCase() : 'ALL PRODUCTS'}
+                    {currentCategoryLabel}
                   </Typography>
                   <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 400, display: 'block' }}>
                     Showing {products.length} results

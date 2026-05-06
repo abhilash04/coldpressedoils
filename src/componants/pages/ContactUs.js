@@ -56,10 +56,10 @@ const ContactUs = () => {
           <Box sx={{ textAlign: "center", mb: 2 }}>
             <Typography
               variant="h2"
-              sx={{ 
-                fontSize: "40px", 
-                fontWeight: 700, 
-                color: "#ffffff !important",
+              sx={{
+                fontSize: "40px",
+                fontWeight: 700,
+                color: "#ffffffff !important",
                 textShadow: "0 2px 4px rgba(0,0,0,0.1)"
               }}
             >
@@ -70,7 +70,7 @@ const ContactUs = () => {
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" sx={{ color: "#ffffff !important" }} />}
             aria-label="breadcrumb"
-            sx={{ 
+            sx={{
               "& .MuiBreadcrumbs-ol": { justifyContent: "center" },
               "& .MuiBreadcrumbs-separator": { color: "#ffffff" }
             }}
