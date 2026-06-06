@@ -78,7 +78,7 @@ const LeadPopup = () => {
         }
       }}
     >
-      {/* <IconButton
+      <IconButton
         onClick={() => handleClose(true)}
         sx={{
           position: 'absolute',
@@ -89,7 +89,7 @@ const LeadPopup = () => {
         }}
       >
         <CloseIcon />
-      </IconButton> */}
+      </IconButton>
 
       <DialogContent sx={{ p: 0 }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>

@@ -1,14 +1,14 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  FormGroup, 
-  FormControlLabel, 
-  Checkbox, 
-  Slider, 
-  Divider, 
-  List, 
-  ListItem, 
+import {
+  Box,
+  Typography,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Slider,
+  Divider,
+  List,
+  ListItem,
   ListItemText,
   ListItemButton
 } from '@mui/material';
@@ -46,13 +46,13 @@ const SidebarFilters = ({ filters, setFilters }) => {
       <List dense sx={{ mb: 4 }}>
         {categories.map((cat) => (
           <ListItem key={cat.label} disablePadding>
-            <ListItemButton 
+            <ListItemButton
               selected={filters.category === cat.name}
               onClick={() => handleCategoryChange(cat.name)}
-              sx={{ 
+              sx={{
                 py: 0.5,
-                '&.Mui-selected': { 
-                  backgroundColor: 'transparent', 
+                '&.Mui-selected': {
+                  backgroundColor: 'transparent',
                   color: 'primary.main',
                   '& .MuiTypography-root': { fontWeight: 600 }
                 }
@@ -88,17 +88,17 @@ const SidebarFilters = ({ filters, setFilters }) => {
       {/* Volume/Weight */}
       <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, fontSize: '1rem' }}>VOLUME / WEIGHT</Typography>
       <FormGroup>
-        {['250ml', '500ml', '1L', '5L', '250g', '500g', '1kg'].map((v) => (
-          <FormControlLabel 
-            key={v} 
+        {['100ml', '250ml', '500ml', '1L', '5L', '100g', '200g', '250g', '500g', '1kg'].map((v) => (
+          <FormControlLabel
+            key={v}
             control={
-              <Checkbox 
-                size="small" 
+              <Checkbox
+                size="small"
                 checked={(filters.volumes || []).includes(v)}
                 onChange={() => handleVolumeToggle(v)}
               />
-            } 
-            label={v} 
+            }
+            label={v}
             sx={{ '& .MuiFormControlLabel-label': { fontSize: '0.875rem' } }}
           />
         ))}

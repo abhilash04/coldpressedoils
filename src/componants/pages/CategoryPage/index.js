@@ -38,8 +38,8 @@ const CategoryPage = () => {
     }
   };
 
-  const details = categoryDetails[category] || { 
-    title: category ? category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Products', 
+  const details = categoryDetails[category] || {
+    title: category ? category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Products',
     description: 'Explore our range of natural and pure health products.',
     image: coldPressedOilsImg
   };
@@ -51,11 +51,11 @@ const CategoryPage = () => {
         const response = await invokeGetApi(apiList.getAllProducts);
         const allProducts = response?.data?.products || response?.data || [];
         const categoryId = CATEGORY_ID_MAP[category];
-        
+
         const filtered = categoryId
           ? allProducts.filter(p => Number(p.category_id) === categoryId)
           : allProducts;
-        
+
         setProducts(filtered);
       } catch (error) {
         console.error("Error fetching category products:", error);
@@ -69,24 +69,25 @@ const CategoryPage = () => {
   return (
     <Box>
       {/* Category Hero */}
-      <Box 
-        sx={{ 
-          height: '300px', 
-          position: 'relative', 
-          display: 'flex', 
-          alignItems: 'center', 
+      <Box
+        sx={{
+          height: '400px',
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           backgroundColor: '#000',
           mb: 6
         }}
       >
-        <Box 
-          component="img" 
-          src={details.image} 
-          sx={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5 }} 
+        <Box
+          component="img"
+          src={details.image}
+          sx={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }}
         />
-        <Container sx={{ position: 'relative', zIndex: 1, color: '#FFF' }}>
-          <Typography variant="h2">{details.title}</Typography>
-          <Typography variant="h6" sx={{ fontWeight: 400, maxWidth: '600px', mt: 1 }}>
+        <Container sx={{ position: 'relative', zIndex: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography variant="h2" sx={{ color: '#FFF', fontWeight: 700 }}>{details.title}</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 600, maxWidth: '600px', mt: 2, color: 'rgba(255, 255, 255, 0.9)' }}>
             {details.description}
           </Typography>
         </Container>

@@ -46,6 +46,7 @@ const ShopPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     category: '',
@@ -58,57 +59,147 @@ const ShopPage = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const response = await invokeGetApi(apiList.getAllProducts);
+  // Fetch all products once on component mount
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      setLoading(true);
+      try {
+        const response = await invokeGetApi(apiList.getAllProducts);
+        let allFetched = [];
+        if (response?.data?.products && Array.isArray(response.data.products)) {
+          allFetched = response.data.products;
+        } else if (Array.isArray(response?.data)) {
+          allFetched = response.data;
+        }
+        setAllProducts(allFetched.length > 0 ? allFetched : allDummyProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setAllProducts(allDummyProducts);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllProducts();
+  }, []);
 
-      let allFetched = [];
-      if (response?.data?.products && Array.isArray(response.data.products)) {
-        allFetched = response.data.products;
-      } else if (Array.isArray(response?.data)) {
-        allFetched = response.data;
-      }
+  // Filter products client-side instantaneously when products list or filters change
+  useEffect(() => {
+    let filtered = [...allProducts];
 
-      // Apply client-side filters
-      let filtered = allFetched.length > 0 ? allFetched : allDummyProducts;
-      if (filters.category) {
-        filtered = filtered.filter(p =>
-          p.category === filters.category ||
-          Number(p.category_id) === Number(filters.category)
-        );
-      }
-      if (filters.priceRange) {
-        filtered = filtered.filter(p => Number(p.price) >= filters.priceRange[0] && Number(p.price) <= filters.priceRange[1]);
-      }
-      if (filters.volumes && filters.volumes.length > 0) {
-        filtered = filtered.filter(p => {
-          const pVolumes = [];
-          if (p.weight) pVolumes.push(p.weight.toLowerCase());
+    // 1. Category Filter
+    if (filters.category) {
+      const filterCatId = Number(filters.category);
+      filtered = filtered.filter(p => {
+        // Compare by ID
+        const catId = Number(p.category_id);
+        if (catId === filterCatId) return true;
+
+        // Compare by category title / label text fallback
+        const categoryName = String(p.category || '').toLowerCase();
+        if (filterCatId === 1 && (categoryName.includes('oil') || categoryName.includes('pressed'))) return true;
+        if (filterCatId === 2 && (categoryName.includes('spice') || categoryName.includes('powder'))) return true;
+        if (filterCatId === 3 && (categoryName.includes('jaggery') || categoryName.includes('sweetener') || categoryName.includes('sugar'))) return true;
+        if (filterCatId === 4 && (categoryName.includes('flour') || categoryName.includes('gluten') || categoryName.includes('atta'))) return true;
+        if (filterCatId === 5 && (categoryName.includes('salt') || categoryName.includes('rock') || categoryName.includes('pink'))) return true;
+
+        return false;
+      });
+    }
+
+    // 2. Price Range Filter (checking variants' prices if they exist)
+    if (filters.priceRange) {
+      filtered = filtered.filter(p => {
+        let pPrice = Number(p.price);
+        if (p.variants) {
+          try {
+            const vars = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants;
+            if (Array.isArray(vars) && vars.length > 0) {
+              const prices = vars.map(v => Number(v.price)).filter(pr => !isNaN(pr));
+              if (prices.length > 0) {
+                pPrice = Math.min(...prices);
+              }
+            }
+          } catch (e) {}
+        }
+        return pPrice >= filters.priceRange[0] && pPrice <= filters.priceRange[1];
+      });
+    }
+
+    // 3. Volume/Weight Filter (robust matching with variants)
+    if (filters.volumes && filters.volumes.length > 0) {
+      filtered = filtered.filter(p => {
+        const pVolumes = [];
+        if (p.weight) pVolumes.push(p.weight.toLowerCase());
+        if (p.variants) {
+          try {
+            const vars = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants;
+            if (Array.isArray(vars)) {
+              vars.forEach(v => {
+                if (v.size) pVolumes.push(v.size.toLowerCase());
+              });
+            }
+          } catch (e) { }
+        }
+
+        return filters.volumes.some(v => {
+          const cleanV = v.toLowerCase().replace(/\s+/g, '');
+          return pVolumes.some(pv => {
+            const cleanPv = pv.replace(/\s+/g, '');
+            if (cleanPv === cleanV) return true;
+            if (cleanPv.includes(cleanV) || cleanV.includes(cleanPv)) return true;
+
+            // Handle common equivalences
+            if ((cleanV === '1l' || cleanV === '1liter' || cleanV === '1litre' || cleanV === '1000ml') &&
+                (cleanPv === '1l' || cleanPv === '1liter' || cleanPv === '1litre' || cleanPv === '1000ml')) return true;
+            if ((cleanV === '5l' || cleanV === '5liter' || cleanV === '5litre' || cleanV === '5000ml') &&
+                (cleanPv === '5l' || cleanPv === '5liter' || cleanPv === '5litre' || cleanPv === '5000ml')) return true;
+            if ((cleanV === '500ml' || cleanV === '0.5l' || cleanV === '0.5liter') &&
+                (cleanPv === '500ml' || cleanPv === '0.5l' || cleanPv === '0.5liter')) return true;
+            if ((cleanV === '250ml' || cleanV === '0.25l') &&
+                (cleanPv === '250ml' || cleanPv === '0.25l')) return true;
+            if ((cleanV === '1kg' || cleanV === '1000g' || cleanV === '1kilo') &&
+                (cleanPv === '1kg' || cleanPv === '1000g' || cleanPv === '1kilo')) return true;
+            return false;
+          });
+        });
+      });
+    }
+
+    // 4. Sort By Filter (based on price or default variant price)
+    if (filters.sortBy === 'price-low') {
+      filtered.sort((a, b) => {
+        const getPrice = (p) => {
           if (p.variants) {
             try {
               const vars = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants;
-              vars.forEach(v => pVolumes.push(v.size.toLowerCase()));
-            } catch (e) { }
+              if (Array.isArray(vars) && vars.length > 0) {
+                return Number(vars[0].price);
+              }
+            } catch (e) {}
           }
-          return filters.volumes.some(v => pVolumes.includes(v.toLowerCase()));
-        });
-      }
-      if (filters.sortBy === 'price-low') filtered = [...filtered].sort((a, b) => Number(a.price) - Number(b.price));
-      if (filters.sortBy === 'price-high') filtered = [...filtered].sort((a, b) => Number(b.price) - Number(a.price));
-
-      setProducts(filtered);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setProducts(allDummyProducts);
-    } finally {
-      setLoading(false);
+          return Number(p.price);
+        };
+        return getPrice(a) - getPrice(b);
+      });
+    } else if (filters.sortBy === 'price-high') {
+      filtered.sort((a, b) => {
+        const getPrice = (p) => {
+          if (p.variants) {
+            try {
+              const vars = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants;
+              if (Array.isArray(vars) && vars.length > 0) {
+                return Number(vars[0].price);
+              }
+            } catch (e) {}
+          }
+          return Number(p.price);
+        };
+        return getPrice(b) - getPrice(a);
+      });
     }
-  };
 
-  useEffect(() => {
-    fetchProducts();
-  }, [filters]);
+    setProducts(filtered);
+  }, [allProducts, filters]);
 
   const categoryLabels = {
     1: 'Cold Pressed Oils',
@@ -279,7 +370,7 @@ const ShopPage = () => {
               ) : products.length > 0 ? (
                 products.map((product) => (
                   <Grid item xs={12} sm={6} md={4} key={product.id}>
-                    <ProductCard product={product} />
+                    <ProductCard product={product} selectedVolumes={filters.volumes} />
                   </Grid>
                 ))
               ) : (
