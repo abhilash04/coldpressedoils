@@ -7,6 +7,7 @@ import { Close as CloseIcon, Phone as PhoneIcon, Person as PersonIcon } from '@m
 import Cookies from 'js-cookie';
 import { invokeApi, apiList } from '../../services/apiServices';
 import { config } from '../../config/config';
+import popupImg from '../../assets/pop-up.png';
 
 const LeadPopup = () => {
   const [open, setOpen] = useState(false);
@@ -17,22 +18,14 @@ const LeadPopup = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    // Check if user has already submitted or closed the popup recently
-    const hasInteracted = Cookies.get('amrutha_lead_interacted');
-    if (!hasInteracted) {
-      const timer = setTimeout(() => {
-        setOpen(true);
-      }, 5000); // 5 second delay
-      return () => clearTimeout(timer);
-    }
+    const timer = setTimeout(() => {
+      setOpen(true);
+    }, 5000); // 5 second delay
+    return () => clearTimeout(timer);
   }, []);
 
-  const handleClose = (permanent = false) => {
+  const handleClose = () => {
     setOpen(false);
-    if (permanent) {
-      // Set cookie for 30 days so they don't see it again
-      Cookies.set('amrutha_lead_interacted', 'true', { expires: 30 });
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -66,7 +59,7 @@ const LeadPopup = () => {
   return (
     <Dialog
       open={open}
-      onClose={() => handleClose(false)}
+      onClose={handleClose}
       maxWidth="sm"
       fullWidth
       PaperProps={{
@@ -79,39 +72,44 @@ const LeadPopup = () => {
       }}
     >
       <IconButton
-        onClick={() => handleClose(true)}
+        onClick={handleClose}
         sx={{
           position: 'absolute',
           right: 8,
           top: 8,
-          color: 'grey.500',
-          zIndex: 1
+          zIndex: 10,
+          backgroundColor: 'rgba(255,255,255,0.9)',
+          color: '#333',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          '&:hover': { backgroundColor: '#fff', color: '#E53935' },
+          width: 32,
+          height: 32,
         }}
       >
-        <CloseIcon />
+        <CloseIcon sx={{ fontSize: '1.1rem' }} />
       </IconButton>
 
       <DialogContent sx={{ p: 0 }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' } }}>
-          {/* Left Column - Image/Branding */}
+          {/* Left Column - Image */}
           <Box
             sx={{
               width: { xs: '100%', sm: '40%' },
-              display: { xs: 'none', sm: 'flex' },
-              bgcolor: 'primary.main',
-              p: 4,
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              color: 'white',
-              textAlign: 'center'
+              display: { xs: 'none', sm: 'block' },
+              overflow: 'hidden',
             }}
           >
-            <Typography variant="h4" fontWeight={900} sx={{ mb: 1 }}>10% OFF</Typography>
-            <Typography variant="subtitle1">On your first order today!</Typography>
-            <Box sx={{ mt: 3, opacity: 0.8 }}>
-              <Typography variant="caption">Authentic. Pure. Traditional.</Typography>
-            </Box>
+            <Box
+              component="img"
+              src={popupImg}
+              alt="Special Offer"
+              sx={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
           </Box>
 
           {/* Right Column - Form */}
