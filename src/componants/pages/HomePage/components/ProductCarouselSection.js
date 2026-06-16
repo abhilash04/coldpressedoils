@@ -28,7 +28,7 @@ const ProductCarouselSection = ({ title, categoryId, bgColor = '#FFF', viewAllLi
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const sliderRef = useRef(null);
 
   useEffect(() => {
@@ -80,11 +80,13 @@ const ProductCarouselSection = ({ title, categoryId, bgColor = '#FFF', viewAllLi
       },
       {
         breakpoint: 900,
-        settings: { slidesToShow: 2, slidesToScroll: 1, infinite: products.length > 2 }
-      },
-      {
-        breakpoint: 600,
-        settings: { slidesToShow: 2, slidesToScroll: 1, infinite: products.length > 2 }
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          infinite: products.length > 1,
+          centerMode: true,
+          centerPadding: '1px'
+        }
       }
     ],
     appendDots: dots => (
@@ -139,7 +141,7 @@ const ProductCarouselSection = ({ title, categoryId, bgColor = '#FFF', viewAllLi
         {loading ? (
           <Grid container spacing={2}>
             {[1, 2, 3, 4].map((n) => (
-              <Grid item xs={6} md={3} key={n}>
+              <Grid item xs={isMobile ? 12 : 3} key={n}>
                 <Skeleton variant="rectangular" height={300} />
                 <Skeleton variant="text" sx={{ mt: 1 }} />
                 <Skeleton variant="text" width="60%" />
