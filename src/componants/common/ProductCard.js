@@ -29,10 +29,9 @@ const assetMap = {
   sunflower: walnutImg,
 };
 
-const ProductCard = ({ product, selectedVolumes }) => {
+const ProductCard = ({ product }) => {
   const { addToCart, setCartOpen, cartItems } = useCart();
   const { name, price, oldPrice, rating, reviews, image, featuredImage, badge, weight, slug, ogUrl, variants } = product;
-  const displayName = name || product.productName || '';
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
