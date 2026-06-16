@@ -56,11 +56,13 @@ const FeaturedProducts = () => {
         }
       },
       {
-        breakpoint: 600,
+        breakpoint: 960,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: 1,
           slidesToScroll: 1,
           infinite: products.length > 1,
+          centerMode: true,
+          centerPadding: '15px',
         }
       }
     ],
@@ -176,7 +178,7 @@ const FeaturedProducts = () => {
         {loading ? (
           <Grid container spacing={isMobile ? 2 : 4}>
             {[1, 2, 3].map((n) => (
-              <Grid item xs={isMobile ? 6 : 3} key={n}>
+              <Grid item xs={isMobile ? 12 : 3} key={n}>
                 <Skeleton variant="rectangular" height={isMobile ? 220 : 350} />
                 <Skeleton variant="text" sx={{ mt: 1 }} />
                 <Skeleton variant="text" width="100%" />
@@ -202,7 +204,7 @@ const FeaturedProducts = () => {
                 },
                 width: 40,
                 height: 40,
-                display: products.length > (isMobile ? 2 : 4) ? 'flex' : 'none'
+                display: products.length > (isMobile ? 1 : 4) ? 'flex' : 'none'
               }}
             >
               <ArrowBackIosNew sx={{ fontSize: '1.2rem' }} />
@@ -233,14 +235,13 @@ const FeaturedProducts = () => {
                 },
                 width: 40,
                 height: 40,
-                display: products.length > (isMobile ? 2 : 4) ? 'flex' : 'none'
+                display: products.length > (isMobile ? 1 : 4) ? 'flex' : 'none'
               }}
             >
               <ArrowForwardIos sx={{ fontSize: '1.2rem' }} />
             </IconButton>
           </Box>
         )}
-
 
       </Container>
     </Box>

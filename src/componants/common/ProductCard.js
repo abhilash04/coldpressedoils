@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card, CardMedia, CardContent, Typography, Button, Box,
   IconButton, Rating, Chip, useTheme, useMediaQuery, Select, MenuItem
@@ -29,9 +29,10 @@ const assetMap = {
   sunflower: walnutImg,
 };
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, selectedVolumes }) => {
   const { addToCart, setCartOpen, cartItems } = useCart();
   const { name, price, oldPrice, rating, reviews, image, featuredImage, badge, weight, slug, ogUrl, variants } = product;
+  const displayName = name || product.productName || '';
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -46,6 +47,41 @@ const ProductCard = ({ product }) => {
 
   const [selectedVariant, setSelectedVariant] = useState(hasVariants ? parsedVariants[0] : null);
   const [quantity, setQuantity] = useState(1);
+
+  // Update selected variant when selectedVolumes changes
+  useEffect(() => {
+    if (hasVariants && selectedVolumes && selectedVolumes.length > 0) {
+      const matchingVariant = parsedVariants.find(v => {
+        const cleanVSize = v.size.toLowerCase().replace(/\s+/g, '');
+        return selectedVolumes.some(sv => {
+          const cleanSv = sv.toLowerCase().replace(/\s+/g, '');
+          if (cleanVSize === cleanSv) return true;
+          if (cleanVSize.includes(cleanSv) || cleanSv.includes(cleanVSize)) return true;
+
+          // Handle common equivalents
+          if ((cleanSv === '1l' || cleanSv === '1liter' || cleanSv === '1litre' || cleanSv === '1000ml') &&
+            (cleanVSize === '1l' || cleanVSize === '1liter' || cleanVSize === '1litre' || cleanVSize === '1000ml')) return true;
+          if ((cleanSv === '5l' || cleanSv === '5liter' || cleanSv === '5litre' || cleanSv === '5000ml') &&
+            (cleanVSize === '5l' || cleanVSize === '5liter' || cleanVSize === '5litre' || cleanVSize === '5000ml')) return true;
+          if ((cleanSv === '500ml' || cleanSv === '0.5l' || cleanSv === '0.5liter') &&
+            (cleanVSize === '500ml' || cleanVSize === '0.5l' || cleanVSize === '0.5liter')) return true;
+          if ((cleanSv === '250ml' || cleanSv === '0.25l') &&
+            (cleanVSize === '250ml' || cleanVSize === '0.25l')) return true;
+          if ((cleanSv === '1kg' || cleanSv === '1000g' || cleanSv === '1kilo') &&
+            (cleanVSize === '1kg' || cleanVSize === '1000g' || cleanVSize === '1kilo')) return true;
+
+          return false;
+        });
+      });
+      if (matchingVariant) {
+        setSelectedVariant(matchingVariant);
+      } else {
+        setSelectedVariant(parsedVariants[0]);
+      }
+    } else if (hasVariants) {
+      setSelectedVariant(parsedVariants[0]);
+    }
+  }, [selectedVolumes, variants]);
 
   const displayPrice = selectedVariant ? selectedVariant.price : price;
   const displaySize = selectedVariant ? selectedVariant.size : (weight || '1L');
@@ -145,9 +181,9 @@ const ProductCard = ({ product }) => {
           <CardMedia
             component="img"
             image={getImageSource()}
-            alt={name}
+            alt={displayName}
             sx={{
-              height: isMobile ? 190 : 240,
+              height: isMobile ? 280 : 300,
               width: '100%',
               objectFit: 'cover',
               display: 'block',
@@ -214,7 +250,7 @@ const ProductCard = ({ product }) => {
                 '&:hover': { color: 'primary.main' }
               }}
             >
-              {name}
+              {displayName}
             </Typography>
 
             {/* Price + Rating — right */}
