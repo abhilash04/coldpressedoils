@@ -82,6 +82,7 @@ const ProductDetail = () => {
   const [showStickyBar, setShowStickyBar] = useState(false);
 
   const currentPrice = selectedVariant ? selectedVariant.price : (product?.price || 0);
+  const currentOldPrice = selectedVariant?.originalPrice || product?.oldPrice || 0;
   const currentSize = selectedVariant ? selectedVariant.size : (product?.weight || '1L');
 
   const handleAddToCart = () => {
@@ -172,9 +173,9 @@ const ProductDetail = () => {
           </Typography>
           <Typography variant="h6" sx={{ fontWeight: 800, color: '#1B1F23', lineHeight: 1 }}>
             ₹{currentPrice}
-            {product?.oldPrice && (
+            {currentOldPrice > 0 && Number(currentOldPrice) > Number(currentPrice) && (
               <Typography component="span" variant="caption" sx={{ textDecoration: 'line-through', color: '#999', ml: 1 }}>
-                ₹{product?.oldPrice}
+                ₹{currentOldPrice}
               </Typography>
             )}
           </Typography>
@@ -270,8 +271,8 @@ const ProductDetail = () => {
 
             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, mb: 1 }}>
               <Typography variant="h3" color="primary.main" sx={{ fontWeight: 700 }}>₹{currentPrice}</Typography>
-              {product.oldPrice && (
-                <Typography variant="h5" color="text.secondary" sx={{ textDecoration: 'line-through' }}>₹{product.oldPrice}</Typography>
+              {currentOldPrice > 0 && Number(currentOldPrice) > Number(currentPrice) && (
+                <Typography variant="h5" color="text.secondary" sx={{ textDecoration: 'line-through' }}>₹{currentOldPrice}</Typography>
               )}
             </Box>
 

@@ -1,12 +1,19 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    const savedState = localStorage.getItem('dashboard_sidebar_open');
+    return savedState !== null ? JSON.parse(savedState) : true;
+  });
 
   const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
+    setIsSidebarOpen((prev) => {
+      const newState = !prev;
+      localStorage.setItem('dashboard_sidebar_open', JSON.stringify(newState));
+      return newState;
+    });
   };
 
   return (

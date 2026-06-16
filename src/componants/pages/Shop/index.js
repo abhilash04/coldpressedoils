@@ -32,12 +32,13 @@ import walnutImg from '../../../assets/2(2).png';
 import safflowerImg from '../../../assets/2(3).png';
 
 const allDummyProducts = [
-  { id: 1, name: 'Wood Pressed Groundnut Oil', price: 450, oldPrice: 520, image: groundnutImg, slug: 'groundnut-oil', rating: 4.8, category: 'oils' },
-  { id: 2, name: 'Pure Gir Cow Ghee', price: 1250, oldPrice: 1500, image: gheeImg, slug: 'gir-cow-ghee', rating: 5.0, category: 'ghee' },
-  { id: 3, name: 'Extra Virgin Coconut Oil', price: 650, oldPrice: 750, image: coconutImg, slug: 'virgin-coconut-oil', rating: 4.7, category: 'oils' },
-  { id: 4, name: 'Traditional Black Til Oil', price: 580, oldPrice: 650, image: sesameImg, slug: 'black-til-oil', rating: 4.9, category: 'oils' },
-  { id: 6, name: 'Premium Walnut Oil', price: 950, oldPrice: 1100, image: walnutImg, slug: 'walnut-oil', rating: 4.8, category: 'specialty' },
-  { id: 7, name: 'Natural Safflower Oil', price: 480, oldPrice: 550, image: safflowerImg, slug: 'safflower-oil', rating: 4.7, category: 'oils' },
+  { id: 1, name: 'Wood Pressed Groundnut Oil', price: 450, oldPrice: 520, image: groundnutImg, slug: 'groundnut-oil', rating: 4.8, category_id: 1 },
+  { id: 2, name: 'Pure Gir Cow Ghee', price: 1250, oldPrice: 1500, image: gheeImg, slug: 'gir-cow-ghee', rating: 5.0, category_id: 1 },
+  { id: 3, name: 'Extra Virgin Coconut Oil', price: 650, oldPrice: 750, image: coconutImg, slug: 'virgin-coconut-oil', rating: 4.7, category_id: 1 },
+  { id: 4, name: 'Organic Turmeric Powder', price: 180, oldPrice: 220, image: sesameImg, slug: 'turmeric-powder', rating: 4.9, category_id: 2 },
+  { id: 5, name: 'Natural Jaggery Blocks', price: 120, oldPrice: 150, image: coconutImg, slug: 'natural-jaggery', rating: 4.8, category_id: 3 },
+  { id: 6, name: 'Gluten Free Bajra Flour', price: 95, oldPrice: 120, image: walnutImg, slug: 'bajra-flour', rating: 4.8, category_id: 4 },
+  { id: 7, name: 'Pink Himalayan Salt', price: 80, oldPrice: 100, image: safflowerImg, slug: 'rock-salt', rating: 4.7, category_id: 5 },
 ];
 
 const ShopPage = () => {
@@ -45,10 +46,12 @@ const ShopPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     category: '',
     priceRange: [0, 2000],
+    volumes: [],
     sortBy: 'relevance'
   });
 
@@ -56,46 +59,164 @@ const ShopPage = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const response = await invokeGetApi(apiList.getAllProducts);
-
-      let allFetched = [];
-      if (response?.data?.products && Array.isArray(response.data.products)) {
-        allFetched = response.data.products;
-      } else if (Array.isArray(response?.data)) {
-        allFetched = response.data;
+  // Fetch all products once on component mount
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      setLoading(true);
+      try {
+        const response = await invokeGetApi(apiList.getAllProducts);
+        let allFetched = [];
+        if (response?.data?.products && Array.isArray(response.data.products)) {
+          allFetched = response.data.products;
+        } else if (Array.isArray(response?.data)) {
+          allFetched = response.data;
+        }
+        setAllProducts(allFetched.length > 0 ? allFetched : allDummyProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setAllProducts(allDummyProducts);
+      } finally {
+        setLoading(false);
       }
+    };
+    fetchAllProducts();
+  }, []);
 
-      // Apply client-side filters
-      let filtered = allFetched.length > 0 ? allFetched : allDummyProducts;
-      if (filters.category) {
-        filtered = filtered.filter(p => p.category === filters.category || p.category_id === filters.category);
-      }
-      if (filters.priceRange) {
-        filtered = filtered.filter(p => Number(p.price) >= filters.priceRange[0] && Number(p.price) <= filters.priceRange[1]);
-      }
-      if (filters.sortBy === 'price-low') filtered = [...filtered].sort((a, b) => Number(a.price) - Number(b.price));
-      if (filters.sortBy === 'price-high') filtered = [...filtered].sort((a, b) => Number(b.price) - Number(a.price));
+  // Filter products client-side instantaneously when products list or filters change
+  useEffect(() => {
+    let filtered = [...allProducts];
 
-      setProducts(filtered);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setProducts(allDummyProducts);
-    } finally {
-      setLoading(false);
+    // 1. Category Filter
+    if (filters.category) {
+      const filterCatId = Number(filters.category);
+      filtered = filtered.filter(p => {
+        // Compare by ID
+        const catId = Number(p.category_id);
+        if (catId === filterCatId) return true;
+
+        // Compare by category title / label text fallback
+        const categoryName = String(p.category || '').toLowerCase();
+        if (filterCatId === 1 && (categoryName.includes('oil') || categoryName.includes('pressed'))) return true;
+        if (filterCatId === 2 && (categoryName.includes('spice') || categoryName.includes('powder'))) return true;
+        if (filterCatId === 3 && (categoryName.includes('jaggery') || categoryName.includes('sweetener') || categoryName.includes('sugar'))) return true;
+        if (filterCatId === 4 && (categoryName.includes('flour') || categoryName.includes('gluten') || categoryName.includes('atta'))) return true;
+        if (filterCatId === 5 && (categoryName.includes('salt') || categoryName.includes('rock') || categoryName.includes('pink'))) return true;
+
+        return false;
+      });
     }
+
+    // 2. Price Range Filter (checking variants' prices if they exist)
+    if (filters.priceRange) {
+      filtered = filtered.filter(p => {
+        let pPrice = Number(p.price);
+        if (p.variants) {
+          try {
+            const vars = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants;
+            if (Array.isArray(vars) && vars.length > 0) {
+              const prices = vars.map(v => Number(v.price)).filter(pr => !isNaN(pr));
+              if (prices.length > 0) {
+                pPrice = Math.min(...prices);
+              }
+            }
+          } catch (e) {}
+        }
+        return pPrice >= filters.priceRange[0] && pPrice <= filters.priceRange[1];
+      });
+    }
+
+    // 3. Volume/Weight Filter (robust matching with variants)
+    if (filters.volumes && filters.volumes.length > 0) {
+      filtered = filtered.filter(p => {
+        const pVolumes = [];
+        if (p.weight) pVolumes.push(p.weight.toLowerCase());
+        if (p.variants) {
+          try {
+            const vars = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants;
+            if (Array.isArray(vars)) {
+              vars.forEach(v => {
+                if (v.size) pVolumes.push(v.size.toLowerCase());
+              });
+            }
+          } catch (e) { }
+        }
+
+        return filters.volumes.some(v => {
+          const cleanV = v.toLowerCase().replace(/\s+/g, '');
+          return pVolumes.some(pv => {
+            const cleanPv = pv.replace(/\s+/g, '');
+            if (cleanPv === cleanV) return true;
+            if (cleanPv.includes(cleanV) || cleanV.includes(cleanPv)) return true;
+
+            // Handle common equivalences
+            if ((cleanV === '1l' || cleanV === '1liter' || cleanV === '1litre' || cleanV === '1000ml') &&
+                (cleanPv === '1l' || cleanPv === '1liter' || cleanPv === '1litre' || cleanPv === '1000ml')) return true;
+            if ((cleanV === '5l' || cleanV === '5liter' || cleanV === '5litre' || cleanV === '5000ml') &&
+                (cleanPv === '5l' || cleanPv === '5liter' || cleanPv === '5litre' || cleanPv === '5000ml')) return true;
+            if ((cleanV === '500ml' || cleanV === '0.5l' || cleanV === '0.5liter') &&
+                (cleanPv === '500ml' || cleanPv === '0.5l' || cleanPv === '0.5liter')) return true;
+            if ((cleanV === '250ml' || cleanV === '0.25l') &&
+                (cleanPv === '250ml' || cleanPv === '0.25l')) return true;
+            if ((cleanV === '1kg' || cleanV === '1000g' || cleanV === '1kilo') &&
+                (cleanPv === '1kg' || cleanPv === '1000g' || cleanPv === '1kilo')) return true;
+            return false;
+          });
+        });
+      });
+    }
+
+    // 4. Sort By Filter (based on price or default variant price)
+    if (filters.sortBy === 'price-low') {
+      filtered.sort((a, b) => {
+        const getPrice = (p) => {
+          if (p.variants) {
+            try {
+              const vars = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants;
+              if (Array.isArray(vars) && vars.length > 0) {
+                return Number(vars[0].price);
+              }
+            } catch (e) {}
+          }
+          return Number(p.price);
+        };
+        return getPrice(a) - getPrice(b);
+      });
+    } else if (filters.sortBy === 'price-high') {
+      filtered.sort((a, b) => {
+        const getPrice = (p) => {
+          if (p.variants) {
+            try {
+              const vars = typeof p.variants === 'string' ? JSON.parse(p.variants) : p.variants;
+              if (Array.isArray(vars) && vars.length > 0) {
+                return Number(vars[0].price);
+              }
+            } catch (e) {}
+          }
+          return Number(p.price);
+        };
+        return getPrice(b) - getPrice(a);
+      });
+    }
+
+    setProducts(filtered);
+  }, [allProducts, filters]);
+
+  const categoryLabels = {
+    1: 'Cold Pressed Oils',
+    2: 'Spices & Powders',
+    3: 'Jaggery & Sweeteners',
+    4: 'Healthy Flours',
+    5: 'Rock Salt'
   };
 
-  useEffect(() => {
-    fetchProducts();
-  }, [filters]);
+  const currentCategoryLabel = filters.category 
+    ? (categoryLabels[filters.category] || String(filters.category).replace('-', ' ').toUpperCase())
+    : 'ALL PRODUCTS';
 
   return (
     <Box sx={{ py: 4 }}>
       <SEO
-        title={filters.category ? `${filters.category.replace('-', ' ').toUpperCase()} Shop` : "Shop All Natural Products"}
+        title={filters.category ? `${currentCategoryLabel} Shop` : "Shop All Natural Products"}
         description="Browse our wide range of organic, wood-pressed oils, gluten-free flours, and natural sweeteners. Pure health delivered at your doorstep."
       />
       <Container maxWidth="lg">
@@ -136,7 +257,7 @@ const ShopPage = () => {
                       lineHeight: 1.1
                     }}
                   >
-                    {filters.category ? filters.category.replace('-', ' ').toUpperCase() : 'ALL PRODUCTS'}
+                    {currentCategoryLabel}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 1.5 }}>
                     <Box sx={{ width: 40, height: 2, bgcolor: '#B7791F' }} />
@@ -213,7 +334,7 @@ const ShopPage = () => {
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
                 <Box>
                   <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                    {filters.category ? filters.category.replace('-', ' ').toUpperCase() : 'ALL PRODUCTS'}
+                    {currentCategoryLabel}
                   </Typography>
                   <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 400, display: 'block' }}>
                     Showing {products.length} results
@@ -249,7 +370,7 @@ const ShopPage = () => {
               ) : products.length > 0 ? (
                 products.map((product) => (
                   <Grid item xs={12} sm={6} md={4} key={product.id}>
-                    <ProductCard product={product} />
+                    <ProductCard product={product} selectedVolumes={filters.volumes} />
                   </Grid>
                 ))
               ) : (

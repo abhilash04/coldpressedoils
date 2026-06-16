@@ -40,7 +40,7 @@ const AddProduct = () => {
     variants: []
   });
 
-  const [variantInput, setVariantInput] = useState({ size: "", price: "", stock: "" });
+  const [variantInput, setVariantInput] = useState({ size: "", price: "", stock: "", originalPrice: "" });
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -59,7 +59,7 @@ const AddProduct = () => {
       ...prev,
       variants: [...prev.variants, variantInput]
     }));
-    setVariantInput({ size: "", price: "", stock: "" });
+    setVariantInput({ size: "", price: "", stock: "", originalPrice: "" });
   };
 
   const handleRemoveVariant = (index) => {
@@ -199,13 +199,16 @@ const AddProduct = () => {
                   <Typography variant="h6" sx={{ color: "#2D6A4F", mb: 2, fontWeight: 600 }}>Product Variants (Sizes & Prices)</Typography>
                   <Box sx={{ p: 2, bgcolor: "#f1f3f0", mb: 2 }}>
                     <Grid container spacing={2} alignItems="center">
-                      <Grid item xs={12} md={4}>
-                        <TextField fullWidth label="Size (e.g. 1 Liter or 500g)" value={variantInput.size} onChange={(e) => setVariantInput({...variantInput, size: e.target.value})} />
-                      </Grid>
                       <Grid item xs={12} md={3}>
-                        <TextField fullWidth label="Price (₹)" type="number" value={variantInput.price} onChange={(e) => setVariantInput({...variantInput, price: e.target.value})} />
+                        <TextField fullWidth label="Size (e.g. 1L or 500g)" value={variantInput.size} onChange={(e) => setVariantInput({...variantInput, size: e.target.value})} />
                       </Grid>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12} md={2}>
+                        <TextField fullWidth label="Sale Price (₹)" type="number" value={variantInput.price} onChange={(e) => setVariantInput({...variantInput, price: e.target.value})} />
+                      </Grid>
+                      <Grid item xs={12} md={2}>
+                        <TextField fullWidth label="Original Price (₹)" type="number" value={variantInput.originalPrice} onChange={(e) => setVariantInput({...variantInput, originalPrice: e.target.value})} />
+                      </Grid>
+                      <Grid item xs={12} md={2}>
                         <TextField fullWidth label="Stock" type="number" value={variantInput.stock} onChange={(e) => setVariantInput({...variantInput, stock: e.target.value})} />
                       </Grid>
                       <Grid item xs={12} md={2}>
@@ -219,7 +222,7 @@ const AddProduct = () => {
                       {formData.variants.map((v, i) => (
                         <Chip 
                           key={i} 
-                          label={`${v.size} - ₹${v.price} (${v.stock} in stock)`} 
+                          label={`${v.size} - Sale: ₹${v.price} ${v.originalPrice ? `(MRP: ₹${v.originalPrice})` : ""} [Stock: ${v.stock}]`} 
                           onDelete={() => handleRemoveVariant(i)}
                           sx={{ m: 0.5, bgcolor: "#E8F5E9", color: "#2D6A4F", fontWeight: 600 }}
                         />
